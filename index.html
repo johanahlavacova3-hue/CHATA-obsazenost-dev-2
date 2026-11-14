@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obsazenost chaty</title>
+<meta name="description" content="Kalendář obsazenosti chaty – volné a obsazené termíny.">
+<meta name="robots" content="noindex">
+<!-- ================= NASTAVENÍ – jediné, co je potřeba vyplnit ================= -->
+<script>
+  window.CHATA = {
+    // Adresa webové aplikace z Apps Scriptu (končí na /exec).
+    // Prázdné = stránka ukazuje ukázková data.
+    API_URL: '',
+    // Název spolku, pokud by se nenačetl z tabulky.
+    SPOLEK: 'Turistický oddíl',
+    // Jak často se data obnovují (sekundy).
+    OBNOVA_S: 60,
+    // Kolik měsíců dopředu jde listovat.
+    MESICU_DOPREDU: 24,
+  };
+</script>
+<style>
+  :root {
+    --cerna: #202124;
+    --bila: #ffffff;
+    --seda: #5f6368;
+    --seda-sv: #f1f3f4;
+    --linka: #e0e0e0;
+    --modra: #0022FF;
+    --alert: #FFCC00;
+    --volno-bg: #c8e6c9;
+    --volno-fg: #2e7d32;
+    --obs-bg: #ef9a9a;
+    --obs-fg: #7f0000;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bila); color: var(--cerna); }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.4; }
+
+  header { background: var(--modra); color: var(--bila); }
+  .obal { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+  header .obal { padding-top: 22px; padding-bottom: 20px; }
+  header .spolek { font-size: 13px; font-weight: bold; letter-spacing: .08em; text-transform: uppercase; opacity: .9; }
+  header h1 { margin: 4px 0 0; font-size: 28px; line-height: 1.15; }
+
+  main .obal { padding-top: 22px; padding-bottom: 40px; }
+
+  .lista { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .lista h2 { flex: 1; margin: 0; font-size: 22px; }
+  .lista h2::first-letter { text-transform: uppercase; }
+  .tl {
+    min-width: 44px; height: 44px; padding: 0 14px; border: 1px solid var(--linka); border-radius: 8px;
+    background: var(--bila); color: var(--cerna); font: inherit; font-weight: bold; cursor: pointer;
+  }
+  .tl:hover:not(:disabled) { border-color: var(--modra); color: var(--modra); }
+  .tl:focus-visible { outline: 2px solid var(--modra); outline-offset: 2px; }
+  .tl:disabled { color: var(--linka); cursor: default; }
+
+  .kal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .dnyt { font-size: 13px; font-weight: bold; color: var(--seda); text-align: center; padding: 4px 0 6px; }
+  .den {
+    position: relative; min-height: 76px; padding: 8px; border-radius: 8px;
+    background: var(--seda-sv); display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .den .c { font-weight: bold; font-size: 15px; }
+  .den .s { font-size: 13px; font-weight: bold; }
+  .den.volno { background: var(--volno-bg); color: var(--volno-fg); }
+  .den.obsazeno { background: var(--obs-bg); color: var(--obs-fg); }
+  .den.minule { background: var(--bila); color: #bdbdbd; border: 1px solid var(--seda-sv); }
+  .den.prazdny { background: transparent; }
+  .den.dnes { box-shadow: inset 0 0 0 3px var(--modra); }
+  .den.dnes .c::after { content: ' dnes'; font-size: 11px; font-weight: bold; color: var(--modra); }
+  .den.nacita { background: var(--seda-sv); color: var(--seda); }
+
+  .legenda { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 14px; color: var(--seda); }
+  .legenda span { display: inline-flex; align-items: center; gap: 6px; }
+  .legenda i { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
+  .legenda .lv { background: var(--volno-bg); }
+  .legenda .lo { background: var(--obs-bg); }
+  .legenda .ld { background: var(--bila); box-shadow: inset 0 0 0 3px var(--modra); }
+
+  .stav { margin-top: 18px; font-size: 13px; color: var(--seda); }
+  .hlaska { margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: var(--alert); font-size: 14px; }
+  .skryt { display: none !important; }
+
+  @media (max-width: 560px) {
+    header h1 { font-size: 24px; }
+    .lista h2 { font-size: 19px; }
+    .kal { gap: 3px; }
+    .den { min-height: 52px; padding: 6px 4px; align-items: center; justify-content: center; }
+    .den .s { display: none; }
+    .den.dnes .c::after { content: ''; }
+    #dnesTl { padding: 0 10px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .den { transition: background-color .2s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="obal">
+    <div class="spolek" id="spolek"></div>
+    <h1>Obsazenost chaty</h1>
+  </div>
+</header>
+
+<main>
+  <div class="obal">
+    <div class="lista">
+      <button class="tl" id="predTl" aria-label="Předchozí měsíc">‹</button>
+      <h2 id="mesic" aria-live="polite"></h2>
+      <button class="tl" id="dnesTl">Dnes</button>
+      <button class="tl" id="dalTl" aria-label="Další měsíc">›</button>
+    </div>
+
+    <div class="kal" role="grid" aria-labelledby="mesic">
+      <div class="dnyt">Po</div><div class="dnyt">Út</div><div class="dnyt">St</div><div class="dnyt">Čt</div>
+      <div class="dnyt">Pá</div><div class="dnyt">So</div><div class="dnyt">Ne</div>
+    </div>
+    <div class="kal" id="mrizka"></div>
+
+    <div class="legenda">
+      <span><i class="lv"></i>volno</span>
+      <span><i class="lo"></i>obsazeno</span>
+      <span><i class="ld"></i>dnes</span>
+    </div>
+
+    <div class="hlaska skryt" id="chyba"></div>
+    <div class="stav" id="stav"></div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var CFG = window.CHATA || {};
+  var MESICE = ['leden', 'únor', 'březen', 'duben', 'květen', 'červen', 'červenec', 'srpen', 'září', 'říjen', 'listopad', 'prosinec'];
+  var MESICE_GEN = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+
+  var el = function (id) { return document.getElementById(id); };
+  var data = null;          // { spolek, dnes, aktualizovano, obsazeno:[{od,do}] }
+  var obsazeneDny = {};     // 'YYYY-MM-DD' → true
+  var dnes = klicZData(new Date());
+  var zobrazeny = { r: Number(dnes.slice(0, 4)), m: Number(dnes.slice(5, 7)) - 1 };
+
+  el('spolek').textContent = CFG.SPOLEK || '';
+
+  /* ---------- pomocné funkce pro data ---------- */
+
+  function dvoj(n) { return (n < 10 ? '0' : '') + n; }
+  function klic(r, m, d) { return r + '-' + dvoj(m + 1) + '-' + dvoj(d); }
+  function klicZData(d) { return klic(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function platnyKlic(k) { return typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k); }
+
+  function prevedData(d) {
+    obsazeneDny = {};
+    (d.obsazeno || []).forEach(function (b) {
+      if (!platnyKlic(b.od) || !platnyKlic(b.do)) return;
+      var t = new Date(Date.UTC(+b.od.slice(0, 4), +b.od.slice(5, 7) - 1, +b.od.slice(8, 10)));
+      var konec = b.do;
+      for (var i = 0; i < 400; i++) {
+        var k = t.getUTCFullYear() + '-' + dvoj(t.getUTCMonth() + 1) + '-' + dvoj(t.getUTCDate());
+        if (k > konec) break;
+        obsazeneDny[k] = true;
+        t.setUTCDate(t.getUTCDate() + 1);
+      }
+    });
+  }
+
+  /* ---------- vykreslení kalendáře ---------- */
+
+  function vykresli() {
+    var r = zobrazeny.r, m = zobrazeny.m;
+    el('mesic').textContent = MESICE[m] + ' ' + r;
+
+    var prvni = new Date(r, m, 1);
+    var posun = (prvni.getDay() + 6) % 7;
+    var dnuVMesici = new Date(r, m + 1, 0).getDate();
+    var mriz = el('mrizka');
+    mriz.textContent = '';
+
+    for (var i = 0; i < posun; i++) {
+      var p = document.createElement('div');
+      p.className = 'den prazdny';
+      p.setAttribute('aria-hidden', 'true');
+      mriz.appendChild(p);
+    }
+    for (var d = 1; d <= dnuVMesici; d++) {
+      var k = klic(r, m, d);
+      var bunka = document.createElement('div');
+      var c = document.createElement('span');
+      var s = document.createElement('span');
+      c.className = 'c'; s.className = 's';
+      c.textContent = d;
+      var stav, popis;
+      if (k < dnes) { stav = 'minule'; popis = ''; }
+      else if (!data) { stav = 'nacita'; popis = '…'; }
+      else if (obsazeneDny[k]) { stav = 'obsazeno'; popis = 'obsazeno'; }
+      else { stav = 'volno'; popis = 'volno'; }
+      s.textContent = popis;
+      bunka.className = 'den ' + stav + (k === dnes ? ' dnes' : '');
+      bunka.setAttribute('role', 'gridcell');
+      bunka.setAttribute('aria-label', d + '. ' + MESICE_GEN[m] + (popis && popis !== '…' ? ': ' + popis : '') + (k === dnes ? ', dnes' : ''));
+      bunka.appendChild(c);
+      bunka.appendChild(s);
+      mriz.appendChild(bunka);
+    }
+
+    var odDnes = (r - +dnes.slice(0, 4)) * 12 + (m - (+dnes.slice(5, 7) - 1));
+    el('predTl').disabled = odDnes <= 0;
+    el('dalTl').disabled = odDnes >= (CFG.MESICU_DOPREDU || 24);
+    el('dnesTl').disabled = odDnes === 0;
+  }
+
+  function posunMesic(o) {
+    var d = new Date(zobrazeny.r, zobrazeny.m + o, 1);
+    zobrazeny = { r: d.getFullYear(), m: d.getMonth() };
+    vykresli();
+  }
+
+  el('predTl').addEventListener('click', function () { posunMesic(-1); });
+  el('dalTl').addEventListener('click', function () { posunMesic(1); });
+  el('dnesTl').addEventListener('click', function () {
+    zobrazeny = { r: +dnes.slice(0, 4), m: +dnes.slice(5, 7) - 1 };
+    vykresli();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+    if (e.key === 'ArrowLeft' && !el('predTl').disabled) posunMesic(-1);
+    if (e.key === 'ArrowRight' && !el('dalTl').disabled) posunMesic(1);
+  });
+
+  /* ---------- načítání dat ---------- */
+
+  function ukazkovaData() {
+    var t = new Date();
+    function pos(dny) { var x = new Date(t); x.setDate(x.getDate() + dny); return klicZData(x); }
+    return {
+      spolek: CFG.SPOLEK, dnes: klicZData(t), aktualizovano: new Date().toISOString(), ukazka: true,
+      obsazeno: [
+        { od: pos(2), do: pos(4) }, { od: pos(9), do: pos(11) }, { od: pos(16), do: pos(17) },
+        { od: pos(23), do: pos(30) }, { od: pos(41), do: pos(43) }, { od: pos(55), do: pos(58) },
+      ],
+    };
+  }
+
+  function nactiJsonp(url) {
+    return new Promise(function (ok, chyba) {
+      var jmeno = 'chataCb' + Date.now();
+      var sc = document.createElement('script');
+      var hotovo = function () { try { delete window[jmeno]; } catch (e) { window[jmeno] = undefined; } sc.remove(); };
+      var casovac = setTimeout(function () { hotovo(); chyba(new Error('timeout')); }, 15000);
+      window[jmeno] = function (d) { clearTimeout(casovac); hotovo(); ok(d); };
+      sc.onerror = function () { clearTimeout(casovac); hotovo(); chyba(new Error('jsonp')); };
+      sc.src = url + (url.indexOf('?') < 0 ? '?' : '&') + 'callback=' + jmeno + '&_=' + Date.now();
+      document.head.appendChild(sc);
+    });
+  }
+
+  function nacti() {
+    if (!CFG.API_URL) return Promise.resolve(ukazkovaData());
+    var url = CFG.API_URL + (CFG.API_URL.indexOf('?') < 0 ? '?' : '&') + '_=' + Date.now();
+    return fetch(url, { cache: 'no-store', credentials: 'omit' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .catch(function () { return nactiJsonp(CFG.API_URL); });
+  }
+
+  function obnov() {
+    nacti().then(function (d) {
+      if (!d || !Array.isArray(d.obsazeno)) throw new Error('data');
+      data = d;
+      if (platnyKlic(d.dnes)) dnes = d.dnes;
+      if (d.spolek) el('spolek').textContent = String(d.spolek).slice(0, 80);
+      prevedData(d);
+      el('chyba').classList.add('skryt');
+      var cas = new Date(d.aktualizovano || Date.now());
+      el('stav').textContent = (d.ukazka ? 'Ukázková data – v index.html doplň API_URL. ' : '') +
+        'Aktualizováno ' + cas.getHours() + ':' + dvoj(cas.getMinutes()) + ', obnovuje se automaticky.';
+      vykresli();
+    }).catch(function () {
+      el('chyba').textContent = data
+        ? 'Nepodařilo se načíst nejnovější stav, zobrazuji poslední známý. Zkouším znovu…'
+        : 'Obsazenost se teď nepodařilo načíst. Zkouším znovu…';
+      el('chyba').classList.remove('skryt');
+    });
+  }
+
+  vykresli();
+  obnov();
+  setInterval(function () { if (!document.hidden) obnov(); }, Math.max(20, CFG.OBNOVA_S || 60) * 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) obnov(); });
+})();
+</script>
+</body>
+</html>
