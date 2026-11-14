@@ -1,0 +1,132 @@
+/* =========================================================
+   OBSAZENOST CHATY – styly
+   1. Proměnné   2. Základ   3. Hlavička   4. Navigace
+   5. Kalendář   6. Legenda a hlášky   7. Mobil
+   ========================================================= */
+
+/* 1. Proměnné ------------------------------------------- */
+:root {
+  --cerna: #202124;
+  --bila: #ffffff;
+  --seda: #5f6368;
+  --seda-sv: #f1f3f4;
+  --linka: #e0e0e0;
+  --modra: #0022FF;
+  --alert: #FFCC00;
+
+  --volno-bg: #c8e6c9;
+  --volno-fg: #2e7d32;
+  --obs-bg: #ef9a9a;
+  --obs-fg: #7f0000;
+
+  --radius: 8px;
+  --pismo: Arial, Helvetica, sans-serif;
+}
+
+/* 2. Základ --------------------------------------------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bila); color: var(--cerna); }
+body { font-family: var(--pismo); font-size: 16px; line-height: 1.4; }
+
+.obal { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+.obsah { padding-top: 22px; padding-bottom: 40px; }
+.skryt { display: none !important; }
+.skryte {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* 3. Hlavička ------------------------------------------- */
+.hlavicka { background: var(--modra); color: var(--bila); }
+.hlavicka .obal { padding-top: 22px; padding-bottom: 20px; }
+.hlavicka__spolek {
+  min-height: 1.2em; font-size: 13px; font-weight: bold;
+  letter-spacing: .08em; text-transform: uppercase; opacity: .9;
+}
+.hlavicka__nadpis { margin: 4px 0 0; font-size: 28px; line-height: 1.15; }
+
+/* 4. Navigace ------------------------------------------- */
+.navigace { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.navigace__vyber { flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; }
+
+.tlacitko {
+  min-width: 44px; height: 44px; padding: 0 14px;
+  border: 1px solid var(--linka); border-radius: var(--radius);
+  background: var(--bila); color: var(--cerna);
+  font: inherit; font-weight: bold; cursor: pointer;
+}
+.tlacitko:hover:not(:disabled) { border-color: var(--modra); color: var(--modra); }
+.tlacitko:disabled { color: var(--linka); cursor: default; }
+
+.vyber {
+  appearance: none; -webkit-appearance: none;
+  height: 44px; padding: 0 26px 0 8px; margin: 0;
+  border: 1px solid transparent; border-radius: var(--radius);
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235f6368' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 8px center;
+  color: var(--cerna); font: inherit; font-size: 22px; font-weight: bold; cursor: pointer;
+}
+.vyber:hover { border-color: var(--linka); }
+.vyber--mesic { text-transform: capitalize; }
+.vyber { field-sizing: content; } /* šířka podle vybraného textu (novější prohlížeče) */
+
+.tlacitko:focus-visible, .vyber:focus-visible { outline: 2px solid var(--modra); outline-offset: 2px; }
+
+/* 5. Kalendář ------------------------------------------- */
+.kalendar__dny, .kalendar__mrizka { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.kalendar__dny div {
+  padding: 4px 0 6px; text-align: center;
+  font-size: 13px; font-weight: bold; color: var(--seda);
+}
+
+.den {
+  min-height: 76px; padding: 8px; border-radius: var(--radius);
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: var(--seda-sv); color: var(--seda);
+}
+.den__cislo { font-size: 15px; font-weight: bold; }
+.den__stav { font-size: 13px; font-weight: bold; }
+
+.den--prazdny { background: transparent; }
+.den--volno { background: var(--volno-bg); color: var(--volno-fg); }
+.den--obsazeno { background: var(--obs-bg); color: var(--obs-fg); }
+.den--minule { opacity: .45; }
+.den--dnes { box-shadow: inset 0 0 0 3px var(--modra); opacity: 1; }
+.den--dnes .den__cislo::after { content: ' dnes'; font-size: 11px; color: var(--modra); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .den { transition: background-color .2s, opacity .2s; }
+}
+
+/* 6. Legenda a hlášky ----------------------------------- */
+.legenda {
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
+  margin: 16px 0 0; padding: 0; list-style: none;
+  font-size: 14px; color: var(--seda);
+}
+.legenda li { display: inline-flex; align-items: center; gap: 6px; }
+.legenda__barva { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
+.legenda__barva--volno { background: var(--volno-bg); }
+.legenda__barva--obsazeno { background: var(--obs-bg); }
+.legenda__barva--dnes { box-shadow: inset 0 0 0 3px var(--modra); }
+.legenda__barva--minule { background: var(--volno-bg); opacity: .45; }
+
+.hlaska {
+  margin: 14px 0 0; padding: 12px 14px; border-radius: var(--radius);
+  background: var(--alert); font-size: 14px;
+}
+.stav { margin: 18px 0 0; font-size: 13px; color: var(--seda); }
+
+/* 7. Mobil ---------------------------------------------- */
+@media (max-width: 560px) {
+  .hlavicka__nadpis { font-size: 24px; }
+  .navigace { gap: 4px; }
+  .vyber { font-size: 18px; padding-right: 22px; padding-left: 4px; background-position: right 6px center; }
+  .tlacitko { padding: 0 10px; }
+  .kalendar__dny, .kalendar__mrizka { gap: 3px; }
+  .den { min-height: 52px; padding: 6px 4px; align-items: center; justify-content: center; }
+  .den__stav { display: none; }
+  .den--dnes .den__cislo::after { content: ''; }
+}
+@media (max-width: 360px) {
+  #dnes { display: none; }
+}
