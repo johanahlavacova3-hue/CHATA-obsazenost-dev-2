@@ -1,8 +1,9 @@
 /**
  * 3D LOUKA S CHATOU – půdorys v řezu (three.js).
  *
+ * Statická scéna (bez animací) – jde jen otáčet tažením.
  * Režim „Půdorys“: stěny v řezu ~1 m, horní hrana černá jako čára ve výkresu.
- * Režim „Chata“: stěny se zvednou a dosedne sedlová střecha.
+ * Režim „Chata“: stěny v plné výšce + sedlová střecha.
  *
  * Tvar chaty = spodní půdorys z návrhu (stejné souřadnice jako SVG v index.html).
  * Změna půdorysu: uprav pole STENY a VYBAVENI níže (jednotky = px z návrhu).
@@ -19,7 +20,7 @@ function start() {
   const test = document.createElement('canvas');
   if (!(test.getContext('webgl2') || test.getContext('webgl'))) return;   // zůstane SVG záloha
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = true;   // bez animací: žádné samovolné otáčení, „stavba“ ani náklon při scrollu
 
   /* ---------------- půdorys (px z návrhu → metry) ---------------- */
   const K = 0.02;                       // 1 px návrhu = 2 cm → hlavní místnost 6 m
@@ -54,7 +55,7 @@ function start() {
   const kamera = new THREE.PerspectiveCamera(30, 1, 0.1, 400);
 
   const ovl = new OrbitControls(kamera, renderer.domElement);
-  ovl.enableDamping = true;
+  ovl.enableDamping = false;
   ovl.dampingFactor = 0.08;
   ovl.enablePan = false;
   ovl.enableZoom = false;                // kolečko myši posouvá stránku, ne scénu
@@ -400,13 +401,17 @@ function start() {
   /* ---------------- interakce: pauza autorotace, nápověda ---------------- */
   const napoveda = document.getElementById('scenaNapoveda');
   let pauza = null;
+  let tahani = false;
+  ovl.addEventListener('change', budik);
   ovl.addEventListener('start', () => {
+    tahani = true;
     uzivatelTahal = true;
     ovl.autoRotate = false;
     clearTimeout(pauza);
     if (napoveda) napoveda.classList.add('scena__napoveda--pryc');
   });
   ovl.addEventListener('end', () => {
+    tahani = false;
     clearTimeout(pauza);
     if (!reduce) pauza = setTimeout(() => { ovl.autoRotate = true; budik(); }, 6000);
   });
@@ -461,9 +466,11 @@ function start() {
     matStrecha.opacity = matStit.opacity = strechaHodnota;
     matStrecha.depthWrite = matStit.depthWrite = strechaHodnota > 0.98;
 
-    ovl.update();
+    const zmena = ovl.update();
     renderer.render(scena, kamera);
-    requestAnimationFrame(snimek);
+    // vykresluje se jen při tažení nebo přechodu – jinak scéna stojí a nežere výkon
+    if (zmena || tahani || ovl.autoRotate || Math.abs(steny.scale.y - vyskaCil) > 0.002) requestAnimationFrame(snimek);
+    else bezi = false;
   }
 
   box.classList.add('scena--3d');

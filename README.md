@@ -7,10 +7,10 @@ index.html              stránka CHATA (5 listů: 3D půdorys, O Rábu, Vybaven�
 404.html                všechny ostatní položky menu (zatím)
 assets/css/styles.css   vzhled – barvy a písma nahoře v :root
 assets/js/config.js     ★ NASTAVENÍ – adresa Apps Scriptu, seznam fotek v galerii
-assets/js/efekty.js     menu, pilulka v menu, „nafukovací“ nadpisy, magnet, odhalování při scrollu
+assets/js/efekty.js     mobilní menu, stín hlavičky
 assets/js/galerie.js    galerie se šipkami, náhledy, swipe
 assets/js/kalendar.js   kalendář obsazenosti (data z Google Tabulky)
-assets/js/scena3d.js    3D louka s chatou v řezu (půdorys) – tvar chaty v poli STENY
+assets/js/scena3d.js    3D louka s chatou v řezu (statická, otáčí se tažením) – tvar chaty v poli STENY
 assets/img/             fotky (zatím výřezy z návrhu – nahraď originály)
 ```
 
@@ -25,6 +25,7 @@ assets/img/             fotky (zatím výřezy z návrhu – nahraď originály)
 2. Do projektu přidej doménu webu (a `localhost` pro testování).
 3. ID projektu vlož do `ADOBE_KIT` v `<head>` souboru `index.html` i `404.html`.
 4. Pokud Adobe ukáže jiný název rodiny než `gamay-variable`, přepiš ho v `--pismo` ve `styles.css`.
+Nadpisy a titulky = Gamay Condensed (osa šířky 75), text = Gamay Regular (400).
 Dokud je ADOBE_KIT prázdné, používá se náhradní Archivo (Google Fonts). Logo: Lobster.
 
 ## Spuštění

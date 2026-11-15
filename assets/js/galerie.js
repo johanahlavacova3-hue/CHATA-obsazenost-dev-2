@@ -1,5 +1,5 @@
 /**
- * Galerie: nová fotka se „setře“ přes starou ve směru listování + pomalý zoom (Ken Burns).
+ * Galerie: velká fotka, šipky, náhledy.
  * Ovládání: šipky, náhledy, klávesy ← →, swipe. Fotky se berou z CHATA.GALERIE (config.js).
  */
 (function () {
@@ -31,28 +31,14 @@
     nahledy.appendChild(b); male.push(b);
   });
 
-  function ukaz(i, smer) {
+  function ukaz(i) {
     i = (i + fotky.length) % fotky.length;
-    if (i === aktivni) return;
-    velke.forEach(function (el) { el.classList.remove('galerie__foto--predchozi'); });
-    if (aktivni >= 0) {
-      var stara = velke[aktivni];
-      stara.classList.remove('galerie__foto--aktivni', 'galerie__foto--dal', 'galerie__foto--zpet');
-      stara.classList.add('galerie__foto--predchozi');
-    }
-    var nova = velke[i];
-    nova.classList.remove('galerie__foto--dal', 'galerie__foto--zpet', 'galerie__foto--aktivni');
-    void nova.offsetWidth;                                   // restart animace
-    nova.classList.add('galerie__foto--aktivni');
-    if (aktivni >= 0) nova.classList.add(smer < 0 ? 'galerie__foto--zpet' : 'galerie__foto--dal');
     aktivni = i;
-
+    velke.forEach(function (el, j) { el.classList.toggle('galerie__foto--aktivni', j === i); });
     male.forEach(function (el, j) { el.setAttribute('aria-selected', String(j === i)); });
     document.getElementById('galerieCislo').textContent = i + 1;
     var n = male[i];
-    if (nahledy.scrollWidth > nahledy.clientWidth) {
-      nahledy.scrollTo({ left: n.offsetLeft - (nahledy.clientWidth - n.offsetWidth) / 2, behavior: 'smooth' });
-    }
+    if (nahledy.scrollWidth > nahledy.clientWidth) nahledy.scrollLeft = n.offsetLeft - (nahledy.clientWidth - n.offsetWidth) / 2;
   }
 
   document.getElementById('galeriePred').addEventListener('click', function () { ukaz(aktivni - 1, -1); });

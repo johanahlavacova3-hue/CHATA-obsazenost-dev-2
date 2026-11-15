@@ -34,24 +34,25 @@
 }
 
 /* 2. Písmo – Gamay (Adobe Fonts), náhradní Archivo --------
-   Gamay má osy šířky (wdth) a tloušťky (wght). Pokud ti Adobe
-   ukáže v projektu jiný název rodiny, přepiš ho tady.       */
+   Nadpisy a titulky: Gamay Condensed (osa šířky 75 %).
+   Text: Gamay Regular (400, normální šířka).
+   Pokud ti Adobe ukáže v projektu jiný název rodiny, přepiš ho tady. */
 :root {
   --pismo: 'gamay-variable', 'gamay', 'Archivo', Arial, Helvetica, sans-serif;
   --pismo-logo: 'Lobster', 'Brush Script MT', cursive;
-  --sirka-normal: 100;
-  --sirka-uzka: 75;
+  --sirka-normal: 100;   /* Regular */
+  --sirka-cond: 75;      /* Condensed */
 }
-.nadpis, .titulek, .text-tucny { font-family: var(--pismo); }
+.nadpis, .titulek, .kalendar__mesic { font-stretch: condensed; }
 
 /* 3. Základ --------------------------------------------- */
-@property --w { syntax: '<number>'; inherits: true; initial-value: 450; }
+@property --w { syntax: '<number>'; inherits: true; initial-value: 400; }
 @property --d { syntax: '<number>'; inherits: true; initial-value: 100; }
 *, *::before, *::after { box-sizing: border-box; font-variation-settings: 'wght' var(--w), 'wdth' var(--d); }
 html { scroll-behavior: smooth; scroll-padding-top: var(--vyska-hlavicky); -webkit-text-size-adjust: 100%; }
 html, body { margin: 0; background: var(--pozadi); color: var(--text); }
 body {
-  font-family: var(--pismo); font-weight: 450; --w: 450; --d: var(--sirka-normal);
+  font-family: var(--pismo); font-weight: 400; --w: 400; --d: var(--sirka-normal);
   font-size: max(16px, calc(20 * var(--u))); line-height: 1.25; letter-spacing: .005em;
   -webkit-font-smoothing: antialiased; overflow-x: hidden;
 }
@@ -64,14 +65,14 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .skryte { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .nadpis {
-  font-weight: 900; --w: 900; --d: var(--sirka-normal);
+  font-weight: 900; --w: 900; --d: var(--sirka-cond);
   font-size: max(46px, calc(104 * var(--u))); line-height: .9; letter-spacing: -.01em;
   text-transform: uppercase; color: var(--modra);
 }
 .nadpis--obri { font-size: max(72px, calc(164 * var(--u))); text-align: center; }
 .nadpis--stred { text-align: center; }
 .titulek {
-  font-weight: 900; --w: 900; --d: var(--sirka-uzka);
+  font-weight: 900; --w: 900; --d: var(--sirka-cond);
   font-size: max(22px, calc(34 * var(--u))); line-height: 1.05; letter-spacing: -.005em;
 }
 .titulek--velky { font-size: max(24px, calc(37 * var(--u))); }
@@ -83,7 +84,6 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .hlavicka {
   position: sticky; top: 0; z-index: 50;
   background: rgba(247, 247, 247, .86); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px);
-  transition: box-shadow .4s;
 }
 .hlavicka--stin { box-shadow: 0 1px 0 rgba(0, 0, 0, .05), 0 10px 30px rgba(0, 0, 0, .04); }
 .hlavicka__obal {
@@ -92,9 +92,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 }
 .logo {
   font-family: var(--pismo-logo); font-size: max(26px, calc(36 * var(--u))); line-height: 1; color: var(--oranz);
-  text-decoration: none; display: inline-block; transition: transform .5s var(--ease-pruzna);
+  text-decoration: none; display: inline-block;
 }
-.logo:hover { transform: rotate(-4deg) scale(1.06); }
 .logo--male { font-size: 26px; }
 
 .menu { position: relative; display: flex; align-items: center; gap: calc(40 * var(--u)); margin-right: calc(100 * var(--u)); }
@@ -103,12 +102,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   font-weight: 800; --w: 800; --d: var(--sirka-normal); font-size: max(12px, calc(15 * var(--u)));
   letter-spacing: .02em; text-transform: uppercase; text-decoration: none; white-space: nowrap;
 }
-.menu__pilulka {
-  position: absolute; z-index: 0; left: 0; top: 50%; height: calc(100% + 0px); border-radius: max(8px, calc(10 * var(--u)));
-  background: var(--modra-svetla); translate: 0 -50%; pointer-events: none;
-  transition: transform .55s var(--ease-pruzna), width .55s var(--ease-pruzna), opacity .3s;
-}
-.no-pilulka .menu a[aria-current="page"] { background: var(--modra-svetla); }
+.menu a[aria-current="page"] { background: var(--modra-svetla); }
+.menu a:hover { background: rgba(217, 223, 237, .6); }
 .menu-tl { display: none; }
 
 /* 5. Listy ---------------------------------------------- */
@@ -123,9 +118,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   border-radius: max(10px, calc(12 * var(--u))); background: var(--modra-svetla); color: var(--text);
   font-weight: 800; --w: 800; --d: var(--sirka-normal); font-size: max(13px, calc(15 * var(--u)));
   text-transform: uppercase; letter-spacing: .02em; text-decoration: none;
-  transition: background-color .3s, color .3s, transform .5s var(--ease-pruzna);
 }
-.pilulka span { display: inline-block; transition: transform .5s var(--ease-pruzna); }
 .pilulka:hover { background: var(--modra); color: #fff; }
 
 /* 6. 3D scéna ------------------------------------------- */
@@ -139,26 +132,23 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .scena canvas:active { cursor: grabbing; }
 .scena__zaloha { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 8%; color: var(--text); }
 .scena__zaloha .pudorys { width: min(520px, 70%); }
-.scena--3d .scena__zaloha { opacity: 0; transition: opacity .8s; pointer-events: none; }
+.scena--3d .scena__zaloha { display: none; }
 
 .scena__ovladani { position: absolute; left: max(12px, calc(24 * var(--u))); bottom: max(12px, calc(24 * var(--u))); z-index: 3; }
 .scena:not(.scena--3d) .scena__ovladani { display: none; }
 .prepinac { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 12px; background: rgba(255, 255, 255, .85); backdrop-filter: blur(8px); box-shadow: 0 6px 24px rgba(37, 78, 185, .12); }
-.prepinac__jezdec { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 9px; background: var(--modra); transition: transform .55s var(--ease-pruzna); }
-.prepinac[data-stav="chata"] .prepinac__jezdec { transform: translateX(100%); }
 .prepinac__tl {
   position: relative; z-index: 1; border: 0; background: transparent; padding: 9px 18px; cursor: pointer;
   font-weight: 800; --w: 800; --d: var(--sirka-normal); font-size: 13px; text-transform: uppercase; letter-spacing: .03em;
-  transition: color .3s;
 }
-.prepinac__tl[aria-pressed="true"] { color: #fff; }
+.prepinac__tl[aria-pressed="true"] { color: #fff; background: var(--modra); border-radius: 9px; }
 .scena__napoveda {
   position: absolute; right: max(12px, calc(24 * var(--u))); bottom: max(16px, calc(30 * var(--u))); z-index: 3;
   font-size: 13px; font-weight: 700; --w: 700; color: var(--modra);
-  opacity: 0; transition: opacity .6s; pointer-events: none;
+  opacity: 0; pointer-events: none;
 }
 .scena--3d .scena__napoveda { opacity: .75; }
-.scena__napoveda--pryc { opacity: 0 !important; }
+.scena__napoveda--pryc { display: none; }
 
 /* 7. O Rábu --------------------------------------------- */
 .list--rabu { display: grid; grid-template-columns: calc(950 * var(--u)) 1fr; padding-right: calc(10 * var(--u)); }
@@ -174,8 +164,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 }
 .polozka { display: flex; gap: calc(20 * var(--u)); align-items: flex-start; }
 .polozka .titulek { margin: calc(4 * var(--u)) 0 calc(10 * var(--u)); }
-.polozka .ctverec { transition: border-radius .6s var(--ease), transform .6s var(--ease-pruzna); }
-.polozka:hover .ctverec { border-radius: 50%; transform: rotate(-8deg); }
+.polozka .ctverec { }
 
 .plany { display: flex; flex-direction: column; gap: calc(17 * var(--u)); padding-top: calc(142 * var(--u)); }
 .pudorys { width: calc(483 * var(--u)); height: auto; color: #000; overflow: visible; display: block; }
@@ -186,13 +175,6 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .galerie { position: relative; height: calc(830 * var(--u)); min-height: 260px; border-radius: var(--radius-velky); overflow: hidden; background: #2c2c2c; outline-offset: 4px; }
 .galerie__okno { position: absolute; inset: 0; }
 .galerie__foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; visibility: hidden; }
-.galerie__foto--aktivni { visibility: visible; z-index: 2; animation: kenburns 9s var(--ease) both; }
-.galerie__foto--predchozi { visibility: visible; z-index: 1; }
-.galerie__foto--dal { animation: odhal-zprava 1s var(--ease) both, kenburns 9s var(--ease) both; }
-.galerie__foto--zpet { animation: odhal-zleva 1s var(--ease) both, kenburns 9s var(--ease) both; }
-@keyframes odhal-zprava { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
-@keyframes odhal-zleva { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-@keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
 
 .galerie__sipka {
   position: absolute; top: 0; bottom: 0; width: 18%; border: 0; background: transparent; cursor: pointer; z-index: 3;
@@ -202,12 +184,10 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .galerie__sipka--vpravo { right: 0; justify-content: flex-end; padding-right: max(14px, calc(28 * var(--u))); }
 .galerie__sipka::before {
   content: ''; width: max(14px, calc(20 * var(--u))); height: max(14px, calc(20 * var(--u))); border: solid #fff; border-width: 0 0 5px 5px;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .45)); transition: transform .5s var(--ease-pruzna);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .45));
 }
 .galerie__sipka--vlevo::before { transform: rotate(45deg); }
 .galerie__sipka--vpravo::before { transform: rotate(-135deg); }
-.galerie__sipka--vlevo:hover::before { transform: translateX(-6px) rotate(45deg); }
-.galerie__sipka--vpravo:hover::before { transform: translateX(6px) rotate(-135deg); }
 .galerie__pocet {
   position: absolute; right: max(14px, calc(28 * var(--u))); top: max(14px, calc(24 * var(--u))); z-index: 3;
   padding: 4px 10px; border-radius: 99px; background: rgba(0, 0, 0, .35); color: #fff; font-size: 13px; font-weight: 700; --w: 700;
@@ -219,12 +199,9 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .nahled {
   position: relative; flex: none; width: max(84px, calc(199 * var(--u))); aspect-ratio: 199 / 110; padding: 0; border: 0;
   border-radius: max(8px, calc(14 * var(--u))); overflow: hidden; cursor: pointer; background: var(--placeholder);
-  transition: transform .5s var(--ease-pruzna), opacity .3s;
 }
-.nahled img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
-.nahled::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 0 var(--modra); transition: box-shadow .35s var(--ease); }
-.nahled:hover { transform: translateY(-4px); }
-.nahled:hover img { transform: scale(1.08); }
+.nahled img { width: 100%; height: 100%; object-fit: cover; }
+.nahled::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 0 var(--modra); }
 .nahled[aria-selected="true"]::after { box-shadow: inset 0 0 0 3px var(--modra); }
 .nahled[aria-selected="false"] { opacity: .72; }
 
@@ -234,8 +211,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .kontakty { margin-top: calc(76 * var(--u)); display: flex; flex-direction: column; gap: calc(30 * var(--u)); }
 .kontakt { display: flex; gap: calc(20 * var(--u)); align-items: flex-start; }
 .kontakt .titulek { margin: calc(6 * var(--u)) 0 calc(14 * var(--u)); }
-.kontakt a { display: block; width: fit-content; font-size: max(16px, calc(23 * var(--u))); line-height: 1.12; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size .45s var(--ease), color .3s; }
-.kontakt a:hover { color: var(--modra); background-size: 100% 1.5px; }
+.kontakt a { display: block; width: fit-content; font-size: max(16px, calc(23 * var(--u))); line-height: 1.12; text-decoration: none; }
+.kontakt a:hover { color: var(--modra); text-decoration: underline; }
 
 .rezervace__panel { background: var(--modra-svetla); padding: calc(48 * var(--u)) calc(20 * var(--u)) calc(48 * var(--u)); display: flex; flex-direction: column; }
 .kalendar {
@@ -243,13 +220,11 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   padding: calc(28 * var(--u)) calc(11 * var(--u)) calc(22 * var(--u));
 }
 .kalendar__hlava { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 calc(10 * var(--u)) calc(24 * var(--u)); }
-.kalendar__mesic { font-family: var(--pismo); font-weight: 900; --w: 900; --d: var(--sirka-normal); font-size: max(14px, calc(17 * var(--u))); text-transform: uppercase; }
+.kalendar__mesic { font-family: var(--pismo); font-weight: 900; --w: 900; --d: var(--sirka-cond); font-size: max(14px, calc(17 * var(--u))); text-transform: uppercase; }
 .kalendar__nav { display: flex; align-items: center; gap: 4px; }
-.kalendar__sipka, .kalendar__dnes { border: 0; background: transparent; cursor: pointer; border-radius: 8px; transition: background-color .2s, color .2s; }
+.kalendar__sipka, .kalendar__dnes { border: 0; background: transparent; cursor: pointer; border-radius: 8px; }
 .kalendar__sipka { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; }
-.kalendar__sipka svg { width: 9px; height: 15px; fill: none; stroke: var(--text); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .4s var(--ease-pruzna); }
-.kalendar__sipka:hover:not(:disabled) svg { transform: translateX(var(--posun, 0)); }
-#kalPred { --posun: -3px; } #kalDal { --posun: 3px; }
+.kalendar__sipka svg { width: 9px; height: 15px; fill: none; stroke: var(--text); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
 .kalendar__sipka:disabled { opacity: .25; cursor: default; }
 .kalendar__dnes { padding: 8px 6px; font-weight: 800; --w: 800; font-size: max(12px, calc(14 * var(--u))); text-transform: uppercase; letter-spacing: .03em; color: var(--seda-nadpis); }
 .kalendar__dnes:hover:not(:disabled) { color: var(--modra); }
@@ -258,17 +233,14 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .kalendar__dny, .kalendar__mrizka { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: calc(6 * var(--u)); }
 .kalendar__dny { margin-bottom: calc(8 * var(--u)); }
 .kalendar__dny span { text-align: center; font-size: max(11px, calc(14 * var(--u))); text-transform: uppercase; color: var(--seda-nadpis); letter-spacing: .02em; }
-.kalendar__mrizka { perspective: 900px; }
 
 .den {
   position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
   height: max(38px, calc(42 * var(--u))); border-radius: 3px; background: var(--mimo-bg); color: var(--mimo-fg);
-  font-family: var(--pismo); transform-origin: 50% 0;
-  animation: den-preklop .6s var(--ease) both; animation-delay: calc(var(--vlna, 0) * 28ms);
+  font-family: var(--pismo);
 }
-.kalendar__mrizka--zpet .den { transform-origin: 50% 100%; animation-name: den-preklop-zpet; }
-.den__cislo { font-weight: 900; --w: 900; --d: var(--sirka-uzka); font-size: max(13px, calc(14 * var(--u))); line-height: 1; }
-.den__stav { font-weight: 800; --w: 800; --d: var(--sirka-uzka); font-size: max(9px, calc(10 * var(--u))); line-height: 1.1; }
+.den__cislo { font-weight: 900; --w: 900; --d: var(--sirka-cond); font-size: max(13px, calc(14 * var(--u))); line-height: 1; }
+.den__stav { font-weight: 800; --w: 800; --d: var(--sirka-cond); font-size: max(9px, calc(10 * var(--u))); line-height: 1.1; }
 .den--volno { background: var(--volno-bg); color: var(--text); }
 .den--volno .den__stav { color: var(--volno-fg); }
 .den--obsazeno { background: var(--obs-bg); color: var(--text); }
@@ -278,8 +250,6 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .den--mimo .den__stav { color: var(--mimo-fg); }
 .den--dnes { box-shadow: inset 0 0 0 2px var(--modra); }
 .den--dnes::after { content: 'DNES'; position: absolute; top: 3px; right: 5px; font-size: 9px; font-weight: 800; --w: 800; color: var(--modra); }
-@keyframes den-preklop { from { opacity: 0; transform: rotateX(-75deg); } }
-@keyframes den-preklop-zpet { from { opacity: 0; transform: rotateX(75deg); } }
 
 .kalendar__hlaska { margin: 14px 6px 0; padding: 10px 12px; border-radius: 8px; background: #ffcc00; font-size: 14px; }
 .kalendar__stav { margin: 12px calc(10 * var(--u)) 0; font-size: 12px; color: var(--text-sedy); }
@@ -290,52 +260,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   font-size: 14px; color: var(--text-sedy);
 }
 
-/* 12. Animace -------------------------------------------
-   a) nadpisy: písmena se „nafouknou“ z úzkého a tenkého řezu (variabilní písmo)
-   b) fotky a 3D panel: odkrytí pruhem jako turistická značka
-   c) půdorys: čáry se kreslí jedna po druhé
-   d) kalendář: dny se překlápí vlnou po úhlopříčce            */
-.slovo { display: inline-block; white-space: nowrap; }
-.pismeno { display: inline-block; }
-.js .nadpis.odhal .pismeno {
-  opacity: 0; transform: translateY(.18em);
-  --w: 150; --d: 62;
-  transition: --w 1.1s var(--ease), --d 1.2s var(--ease), opacity .6s var(--ease), transform 1.1s var(--ease);
-  transition-delay: calc(var(--i) * 45ms);
-}
-.js .nadpis.odhal.videt .pismeno { opacity: 1; transform: none; --w: 900; --d: var(--sirka-normal); }
-.js .nadpis.hotovo .pismeno { transition: none; }
-
-.js .odhal:not(.nadpis) { opacity: 0; transform: translateY(32px); transition: opacity 1s var(--ease), transform 1s var(--ease); transition-delay: var(--zpozdeni, 0s); }
-.js .odhal.videt:not(.nadpis) { opacity: 1; transform: none; }
-
-/* turistická značka – bílá/modrá/bílá */
-.znacka::after {
-  content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none;
-  background: linear-gradient(180deg, #fff 0 33.33%, var(--modra) 33.33% 66.66%, #fff 66.66% 100%);
-  transform-origin: 100% 50%; transform: scaleX(0);
-}
-.js .znacka.odhal::after { transform: scaleX(1); transform-origin: 0 50%; }
-.js .znacka.odhal.videt::after { animation: znacka 1.5s var(--ease) .15s both; }
-@keyframes znacka {
-  0% { transform: scaleX(1); transform-origin: 100% 50%; }
-  100% { transform: scaleX(0); transform-origin: 100% 50%; }
-}
-.js .znacka.odhal:not(.galerie) { transform: none; }        /* panel se neposouvá, odkryje ho značka */
-.js .foto.znacka img { transform: scale(1.18); transition: transform 1.8s var(--ease) .25s; }
-.js .foto.znacka.videt img { transform: scale(1); }
-.foto.znacka.videt:hover img { transform: scale(1.03); transition-delay: 0s; }
-
-.js .pudorys--kresli path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1s cubic-bezier(.65, 0, .35, 1); transition-delay: calc(.2s + var(--i) * .22s); }
-.js .plany.videt .pudorys--kresli path { stroke-dashoffset: 0; }
-.js .plany.odhal { transform: none; opacity: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
-  .js .odhal:not(.nadpis), .js .nadpis.odhal .pismeno { opacity: 1; transform: none; }
-  .znacka::after { display: none; }
-}
+/* 12. Bez animací – jen statické stavy ------------------ */
+.galerie__foto--aktivni { visibility: visible; z-index: 2; }
 
 /* 13. Tablet (do 1100 px) ------------------------------- */
 @media (max-width: 1100px) {
@@ -345,7 +271,6 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   }
   .menu-tl__car, .menu-tl__car::before, .menu-tl__car::after {
     display: block; width: 20px; height: 2.5px; border-radius: 2px; background: var(--text); position: relative; content: '';
-    transition: transform .4s var(--ease-pruzna), background-color .2s;
   }
   .menu-tl__car::before { position: absolute; top: -6px; }
   .menu-tl__car::after { position: absolute; top: 6px; }
@@ -356,16 +281,11 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   .menu {
     position: absolute; top: 100%; left: 0; right: 0; margin: 0; flex-direction: column; align-items: stretch; gap: 0;
     padding: 4px var(--okraj) 18px; background: var(--pozadi); box-shadow: 0 20px 30px rgba(0, 0, 0, .08);
-    clip-path: inset(0 0 100% 0); visibility: hidden; transition: clip-path .5s var(--ease), visibility 0s .5s;
+    display: none;
   }
-  .menu--otevreno { clip-path: inset(0 0 -40px 0); visibility: visible; transition: clip-path .5s var(--ease); }
-  .menu a { padding: 14px 12px; font-size: 16px; opacity: 0; transform: translateY(-8px); transition: opacity .4s, transform .5s var(--ease); }
-  .menu--otevreno a { opacity: 1; transform: none; }
-  .menu--otevreno a:nth-of-type(2) { transition-delay: .03s; } .menu--otevreno a:nth-of-type(3) { transition-delay: .06s; }
-  .menu--otevreno a:nth-of-type(4) { transition-delay: .09s; } .menu--otevreno a:nth-of-type(5) { transition-delay: .12s; }
-  .menu--otevreno a:nth-of-type(6) { transition-delay: .15s; } .menu--otevreno a:nth-of-type(7) { transition-delay: .18s; }
+  .menu--otevreno { display: flex; }
+  .menu a { padding: 14px 12px; font-size: 16px; }
   .menu a[aria-current="page"] { background: var(--modra-svetla); }
-  .menu__pilulka { display: none; }
 
   :root { --u: calc(100vw / 1280); }
   .list--rabu { grid-template-columns: 1fr 1fr; gap: 32px; padding-right: var(--okraj); }
