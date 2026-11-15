@@ -5,9 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chata – Poutníci</title>
   <meta name="description" content="Chata turistického oddílu Poutníci – 3D půdorys, vybavení, fotky a kalendář obsazenosti.">
+
+  <!-- ============ PÍSMO GAMAY (Adobe Fonts) ============
+       1) fonts.adobe.com → Gamay → „Add to Web Project“ (zaškrtni i Variable)
+       2) ID projektu (např. abc1def) vlož níže do ADOBE_KIT
+       Dokud je prázdné, použije se náhradní Archivo z Google Fonts. -->
+  <script>
+    (function () {
+      var ADOBE_KIT = '';
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = ADOBE_KIT
+        ? 'https://use.typekit.net/' + ADOBE_KIT + '.css'
+        : 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Lobster&display=swap';
+      document.head.appendChild(l);
+      if (ADOBE_KIT) {
+        var lob = document.createElement('link');
+        lob.rel = 'stylesheet';
+        lob.href = 'https://fonts.googleapis.com/css2?family=Lobster&display=swap';
+        document.head.appendChild(lob);
+      }
+      document.documentElement.classList.add('js');
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,800..900&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=Figtree:wght@400;500;700;800&family=Lobster&display=swap">
   <link rel="stylesheet" href="assets/css/styles.css">
   <script type="importmap">
     { "imports": {
@@ -28,6 +50,7 @@
       </button>
 
       <nav class="menu" id="menu" aria-label="Hlavní menu">
+        <span class="menu__pilulka" aria-hidden="true"></span>
         <a href="404.html">Chci se přidat</a>
         <a href="404.html">Plechovky</a>
         <a href="404.html">Akce</a>
@@ -45,89 +68,102 @@
     <section class="list list--chata" id="chata">
       <h1 class="nadpis nadpis--obri odhal">Chata</h1>
 
-      <div class="scena odhal" id="scena">
-        <!-- záložní půdorys, když se 3D nenačte -->
-        <div class="scena__zaloha" id="scenaZaloha" aria-hidden="true">
-          <svg viewBox="0 0 540 300" class="pudorys pudorys--zaloha"><use href="#pudorys-spodni"/></svg>
+      <div class="scena znacka odhal" id="scena">
+        <div class="scena__zaloha" aria-hidden="true">
+          <svg viewBox="0 0 515 280" class="pudorys"><use href="#pudorys-spodni"/></svg>
         </div>
-
         <div class="scena__ovladani">
           <div class="prepinac" role="group" aria-label="Pohled na chatu">
+            <span class="prepinac__jezdec" aria-hidden="true"></span>
             <button type="button" class="prepinac__tl" data-pohled="pudorys" aria-pressed="true">Půdorys</button>
             <button type="button" class="prepinac__tl" data-pohled="chata" aria-pressed="false">Chata</button>
           </div>
         </div>
-        <p class="scena__napoveda" id="scenaNapoveda">Táhni do strany a otáčej</p>
+        <p class="scena__napoveda" id="scenaNapoveda"><span aria-hidden="true">↔</span> táhni a otáčej</p>
       </div>
     </section>
 
     <!-- ============ 2. O RÁBU ============ -->
-    <section class="list list--dva" id="o-rabu">
-      <div class="list__text">
+    <section class="list list--rabu" id="o-rabu">
+      <div class="sloupec">
         <h2 class="nadpis odhal">O Rábu</h2>
         <p class="odstavec odhal">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
-        <div class="list__akce odhal">
-          <a class="pilulka" href="#vybaveni">Chci vědět víc</a>
+        <div class="sloupec__akce odhal">
+          <a class="pilulka magnet" href="#vybaveni"><span>Chci vědět víc</span></a>
         </div>
       </div>
-      <figure class="foto foto--velka odhal">
+      <figure class="foto znacka odhal">
         <img src="assets/img/o-rabu.jpg" alt="Děti s vedoucím nad mapou" loading="lazy" width="1235" height="1050">
       </figure>
     </section>
 
     <!-- ============ 3. VYBAVENÍ ============ -->
-    <section class="list list--dva list--vybaveni" id="vybaveni">
-      <div class="list__text list__text--siroky">
+    <section class="list list--vybaveni" id="vybaveni">
+      <div class="sloupec sloupec--siroky">
         <h2 class="nadpis odhal">Vybavení</h2>
         <p class="odstavec odhal">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
 
         <ul class="vybaveni">
-          <li class="polozka odhal"><span class="polozka__obr" aria-hidden="true"></span><div><h3>Topení</h3><p>Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
-          <li class="polozka odhal"><span class="polozka__obr" aria-hidden="true"></span><div><h3>Kuchyně</h3><p>Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
-          <li class="polozka odhal"><span class="polozka__obr" aria-hidden="true"></span><div><h3>Spinkání</h3><p>Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
-          <li class="polozka odhal"><span class="polozka__obr" aria-hidden="true"></span><div><h3>Louka</h3><p>Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
-          <li class="polozka odhal"><span class="polozka__obr" aria-hidden="true"></span><div><h3>WC</h3><p>Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
-          <li class="polozka odhal"><span class="polozka__obr" aria-hidden="true"></span><div><h3>Nářadí</h3><p>Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+          <li class="polozka odhal"><span class="ctverec" aria-hidden="true"></span><div><h3 class="titulek">Topení</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+          <li class="polozka odhal"><span class="ctverec" aria-hidden="true"></span><div><h3 class="titulek">Kuchyně</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+          <li class="polozka odhal"><span class="ctverec" aria-hidden="true"></span><div><h3 class="titulek">Spinkání</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+          <li class="polozka odhal"><span class="ctverec" aria-hidden="true"></span><div><h3 class="titulek">Louka</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+          <li class="polozka odhal"><span class="ctverec" aria-hidden="true"></span><div><h3 class="titulek">WC</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+          <li class="polozka odhal"><span class="ctverec" aria-hidden="true"></span><div><h3 class="titulek">Nářadí</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
         </ul>
       </div>
 
-      <div class="plany odhal" aria-label="Půdorys chaty">
-        <svg viewBox="0 0 540 300" class="pudorys kresli" role="img" aria-label="Půdorys – horní"><use href="#pudorys-horni"/></svg>
-        <svg viewBox="0 0 540 300" class="pudorys kresli" role="img" aria-label="Půdorys – spodní"><use href="#pudorys-spodni"/></svg>
+      <div class="plany odhal" role="img" aria-label="Půdorysy chaty">
+        <!-- čáry se kreslí postupně (--i = pořadí) -->
+        <svg viewBox="0 0 515 280" class="pudorys pudorys--kresli">
+          <g>
+            <path style="--i:0" pathLength="1" d="M7.5 7.5H308V272.5H7.5Z"/>
+            <path style="--i:1" pathLength="1" d="M308 7.5H507.5V170H308"/>
+            <path style="--i:2" pathLength="1" d="M155 7.5V53H308"/>
+          </g>
+        </svg>
+        <svg viewBox="0 0 515 280" class="pudorys pudorys--kresli">
+          <g>
+            <path style="--i:3" pathLength="1" d="M7.5 7.5H308V272.5H7.5Z"/>
+            <path style="--i:4" pathLength="1" d="M308 7.5H507.5V172H308"/>
+            <path style="--i:5" pathLength="1" d="M155 7.5V54H308"/>
+            <path style="--i:6" pathLength="1" d="M370.5 7.5V172"/>
+            <path style="--i:7" pathLength="1" d="M67 272.5V226H209V272.5"/>
+          </g>
+        </svg>
       </div>
     </section>
 
     <!-- ============ 4. GALERIE ============ -->
-    <section class="list list--galerie" id="fotky" aria-roledescription="galerie" aria-label="Fotky chaty">
-      <div class="galerie odhal">
-        <div class="galerie__okno" id="galerieOkno">
-          <!-- fotky doplní galerie.js ze seznamu níže -->
-        </div>
+    <section class="list list--galerie" id="fotky" aria-label="Fotky chaty">
+      <div class="galerie znacka odhal" tabindex="0" aria-roledescription="galerie">
+        <div class="galerie__okno" id="galerieOkno"></div>
         <button class="galerie__sipka galerie__sipka--vlevo" type="button" id="galeriePred" aria-label="Předchozí fotka"></button>
         <button class="galerie__sipka galerie__sipka--vpravo" type="button" id="galerieDal" aria-label="Další fotka"></button>
+        <p class="galerie__pocet" aria-live="polite"><span id="galerieCislo">1</span>/<span id="galerieCelkem">1</span></p>
       </div>
       <div class="nahledy odhal" id="galerieNahledy" role="tablist" aria-label="Výběr fotky"></div>
     </section>
 
     <!-- ============ 5. REZERVACE + KALENDÁŘ ============ -->
     <section class="list list--rezervace" id="rezervace">
-      <div class="rezervace__text">
+      <div class="sloupec rezervace__text">
         <h2 class="nadpis odhal">Rezervace</h2>
         <p class="odstavec odhal">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
 
         <div class="kontakty">
           <div class="kontakt odhal">
-            <span class="kontakt__foto" aria-hidden="true"></span>
+            <span class="ctverec" aria-hidden="true"></span>
             <div>
-              <h3>Tomáš Černý</h3>
+              <h3 class="titulek titulek--velky">Tomáš Černý</h3>
               <a href="tel:+420333444555">+ 420 333 444 555</a>
               <a href="mailto:turistika@zebrak.cz">turistika@zebrak.cz</a>
             </div>
           </div>
           <div class="kontakt odhal">
-            <span class="kontakt__foto" aria-hidden="true"></span>
+            <span class="ctverec" aria-hidden="true"></span>
             <div>
-              <h3>Tomáš Černý</h3>
+              <h3 class="titulek titulek--velky">Tomáš Černý</h3>
               <a href="tel:+420333444555">+ 420 333 444 555</a>
               <a href="mailto:turistika@zebrak.cz">turistika@zebrak.cz</a>
             </div>
@@ -172,31 +208,18 @@
     <span>© <span id="rok"></span> Turistický oddíl Poutníci</span>
   </footer>
 
-  <!-- ============ PŮDORYSY (SVG symboly – kreslí se na 2 místech) ============ -->
+  <!-- půdorys pro zálohu 3D scény -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <!-- souřadnice přímo z návrhu (1 jednotka ≈ 1 px v návrhu) -->
-      <symbol id="pudorys-horni" viewBox="0 0 540 300">
-        <g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter">
-          <path pathLength="1" d="M7.5 7.5H308V272.5H7.5Z"/>
-          <path pathLength="1" d="M308 7.5H507.5V170H308"/>
-          <path pathLength="1" d="M155 7.5V53H308"/>
-        </g>
-      </symbol>
-      <symbol id="pudorys-spodni" viewBox="0 0 540 300">
-        <g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter">
-          <path pathLength="1" d="M7.5 7.5H308V272.5H7.5Z"/>
-          <path pathLength="1" d="M308 7.5H507.5V172H308"/>
-          <path pathLength="1" d="M155 7.5V54H308"/>
-          <path pathLength="1" d="M370.5 7.5V172"/>
-          <path pathLength="1" d="M67 272.5V226H209V272.5"/>
-        </g>
-      </symbol>
-    </defs>
+    <symbol id="pudorys-spodni" viewBox="0 0 515 280">
+      <g fill="none" stroke="currentColor" stroke-width="15">
+        <path d="M7.5 7.5H308V272.5H7.5Z"/><path d="M308 7.5H507.5V172H308"/><path d="M155 7.5V54H308"/>
+        <path d="M370.5 7.5V172"/><path d="M67 272.5V226H209V272.5"/>
+      </g>
+    </symbol>
   </svg>
 
   <script src="assets/js/config.js"></script>
-  <script src="assets/js/stranka.js"></script>
+  <script src="assets/js/efekty.js"></script>
   <script src="assets/js/galerie.js"></script>
   <script src="assets/js/kalendar.js"></script>
   <script type="module" src="assets/js/scena3d.js"></script>

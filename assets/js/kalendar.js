@@ -42,6 +42,7 @@
   }
 
   /* ---------- vykreslení ---------- */
+  var smer = 0;   // 1 = dál, -1 = zpět (směr překlopení)
   function vykresli() {
     var r = zobrazeny.r, m = zobrazeny.m;
     el('kalMesic').textContent = MESICE[m].toUpperCase() + ' ' + r;
@@ -66,7 +67,7 @@
 
       var bunka = document.createElement('div');
       bunka.className = tridy.join(' ');
-      bunka.style.setProperty('--i', i);
+      bunka.style.setProperty('--vlna', smer < 0 ? (6 - Math.floor(i / 7)) + (6 - i % 7) : Math.floor(i / 7) + i % 7);
       bunka.setAttribute('role', 'gridcell');
       bunka.setAttribute('aria-label', d.getDate() + '. ' + MESICE_GEN[d.getMonth()] + (text ? ': ' + text.toLowerCase() : '') +
         (k === stav.dnes ? ', dnes' : ''));
@@ -77,6 +78,7 @@
       bunka.appendChild(c); bunka.appendChild(s);
       frag.appendChild(bunka);
     }
+    el('kalMrizka').classList.toggle('kalendar__mrizka--zpet', smer < 0);
     el('kalMrizka').textContent = '';
     el('kalMrizka').appendChild(frag);
 
@@ -88,7 +90,9 @@
 
   function prejdi(i) {
     var h = hranice();
-    zobrazeny = zIndexu(Math.min(h.max, Math.max(h.min, i)));
+    i = Math.min(h.max, Math.max(h.min, i));
+    smer = i < index(zobrazeny) ? -1 : 1;
+    zobrazeny = zIndexu(i);
     vykresli();
   }
 

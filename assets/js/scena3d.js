@@ -95,6 +95,9 @@ function start() {
   }
   const naCeste = (x, z) => cesta.some((p) => Math.hypot(p.x - x, p.y - z) < 0.75);
 
+  /* prvky, které se při prvním zobrazení „postaví“ */
+  const stavba = { steny: [], stromy: [], podlahy: [], trava: null, kytky: null };
+
   /* ---------------- louka (ostrůvek) ---------------- */
   const louka = new THREE.Group();
   scena.add(louka);
@@ -163,6 +166,7 @@ function start() {
       n++;
     }
     louka.add(mesh);
+    stavba.trava = mesh;
 
     const KYTKY = 380;
     const kg = new THREE.IcosahedronGeometry(0.07, 0);
@@ -182,6 +186,7 @@ function start() {
       n++;
     }
     louka.add(kytky);
+    stavba.kytky = kytky;
 
     const kg2 = new THREE.CylinderGeometry(0.42, 0.48, 0.12, 9);
     const kameny = new THREE.InstancedMesh(kg2, new THREE.MeshStandardMaterial({ color: 0xb9b2a4, roughness: 0.95 }), cesta.length);
@@ -211,7 +216,9 @@ function start() {
       });
       t.position.set(x, vyskaLouky(x, z) - 0.05, z);
       t.scale.setScalar(s);
+      t.userData.s = s;
       louka.add(t);
+      stavba.stromy.push(t);
     };
     // les za chatou (jako na fotkách) + pár stromů okolo
     for (let i = 0; i < 17; i++) {
@@ -230,6 +237,8 @@ function start() {
     parez.position.set(5.6, 0, -4.4);
     louka.add(parez);
   }
+
+  stavba.stromy.sort((a, b) => Math.atan2(a.position.z, a.position.x) - Math.atan2(b.position.z, b.position.x));
 
   /* ---------------- chata ---------------- */
   const chata = new THREE.Group();
@@ -263,6 +272,7 @@ function start() {
     p.position.set((a.x + b.x) / 2, 0.06, (a.y + b.y) / 2);
     p.receiveShadow = true;
     chata.add(p);
+    stavba.podlahy.push(p);
   });
 
   // základ (podezdívka) pod oběma částmi
@@ -272,6 +282,7 @@ function start() {
     z.position.set((a.x + b.x) / 2, 0, (a.y + b.y) / 2);
     z.receiveShadow = true;
     chata.add(z);
+    stavba.podlahy.push(z);
   });
 
   // stěny: boční strany dřevo, horní hrana černá = čára půdorysu
@@ -294,6 +305,7 @@ function start() {
         s.rotation.y = -Math.atan2(b.y - a.y, b.x - a.x);
         s.castShadow = true; s.receiveShadow = true;
         skupina.add(s);
+        stavba.steny.push(s);
       }
     });
   }
@@ -324,11 +336,13 @@ function start() {
   strecha.visible = false;
 
   /* ---------------- kamera: zarámování a pohledy ---------------- */
-  let videt = false, bezi = false, uvod = false;
-  const POHLED = { pudorys: { polar: 0.62 }, chata: { polar: 0.98 } };
+  let videt = false, bezi = false, stavbaStart = reduce ? -1e9 : null;
   let rezim = 'pudorys';
-  const sfera = new THREE.Spherical(40, reduce ? POHLED.pudorys.polar : 0.001, Math.PI + 0.55);
-  let animace = null;     // { od, do, t0, trvani }
+  // Půdorys: náklon kamery řídí scroll (nahoře = čistý pohled shora). Chata: pevný šikmý pohled.
+  const NAKLON = { shora: 0.06, dole: 0.8, chata: 1.0 };
+  const sfera = new THREE.Spherical(40, reduce ? 0.62 : NAKLON.shora, Math.PI + 0.55);
+  let cilPolar = sfera.phi;
+  let uzivatelTahal = false;
 
   function vzdalenost(polar) {
     const vfov = THREE.MathUtils.degToRad(kamera.fov) / 2;
@@ -358,12 +372,16 @@ function start() {
   new ResizeObserver(velikost).observe(box);
   velikost();
 
-  const ease = (t) => 1 - Math.pow(1 - t, 3);
-  function priblizNa(polar, trvani = 1600) {
-    sfera.setFromVector3(kamera.position.clone().sub(ovl.target));
-    if (reduce) { sfera.phi = polar; nastavKameru(); return; }
-    animace = { od: sfera.phi, do: polar, t0: performance.now(), trvani };
+  const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function naklonZeScrollu() {
+    if (rezim !== 'pudorys' || uzivatelTahal) return;
+    const hl = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vyska-hlavicky')) || 64;
+    const nahore = box.getBoundingClientRect().top + window.scrollY - hl;
+    const p = Math.min(1, Math.max(0, window.scrollY / Math.max(1, nahore + box.clientHeight * 0.35)));
+    cilPolar = reduce ? 0.62 : NAKLON.shora + (NAKLON.dole - NAKLON.shora) * easeIO(p);
   }
+  window.addEventListener('scroll', () => { uzivatelTahal = false; naklonZeScrollu(); budik(); }, { passive: true });
+  naklonZeScrollu();
 
   /* ---------------- přepínání režimů ---------------- */
   let vyskaCil = V_PUDORYS, strechaCil = 0, strechaHodnota = 0;
@@ -371,9 +389,11 @@ function start() {
   tlacitka.forEach((b) => b.addEventListener('click', () => {
     rezim = b.dataset.pohled;
     tlacitka.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    box.querySelector('.prepinac').dataset.stav = rezim;
     vyskaCil = rezim === 'chata' ? V_CHATA : V_PUDORYS;
     strechaCil = rezim === 'chata' ? 1 : 0;
-    priblizNa(POHLED[rezim].polar, 1300);
+    uzivatelTahal = false;
+    if (rezim === 'chata') cilPolar = NAKLON.chata; else naklonZeScrollu();
     budik();
   }));
 
@@ -381,7 +401,7 @@ function start() {
   const napoveda = document.getElementById('scenaNapoveda');
   let pauza = null;
   ovl.addEventListener('start', () => {
-    animace = null;
+    uzivatelTahal = true;
     ovl.autoRotate = false;
     clearTimeout(pauza);
     if (napoveda) napoveda.classList.add('scena__napoveda--pryc');
@@ -394,7 +414,7 @@ function start() {
   /* ---------------- smyčka – běží jen když je scéna vidět ---------------- */
   const io = new IntersectionObserver(([z]) => {
     videt = z.isIntersecting;
-    if (videt && !uvod) { uvod = true; priblizNa(POHLED.pudorys.polar, 2600); }
+    if (videt && stavbaStart === null) stavbaStart = performance.now();
     budik();
   }, { threshold: 0.15 });
   io.observe(box);
@@ -404,16 +424,32 @@ function start() {
     if (!bezi && videt && !document.hidden) { bezi = true; requestAnimationFrame(snimek); }
   }
 
+  /* ---------------- „stavba“ při prvním zobrazení ---------------- */
+  const cas = (t, od, trvani) => Math.min(1, Math.max(0, (t - od) / trvani));
+  const outCubic = (x) => 1 - Math.pow(1 - x, 3);
+  const outBack = (x) => { const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  let postaveno = false;
+  function postav(t) {
+    if (postaveno) return;
+    louka.position.y = -2.6 * (1 - outCubic(cas(t, 0, 1000)));
+    stavba.podlahy.forEach((p) => p.scale.setScalar(Math.max(0.001, outCubic(cas(t, 500, 700)))));
+    stavba.steny.forEach((w, i) => { w.scale.y = Math.max(0.001, outBack(cas(t, 900 + i * 85, 650))); });
+    if (stavba.trava) stavba.trava.scale.y = Math.max(0.001, outCubic(cas(t, 700, 1400)));
+    if (stavba.kytky) stavba.kytky.scale.setScalar(Math.max(0.001, outBack(cas(t, 1900, 900))));
+    stavba.stromy.forEach((st, i) => st.scale.setScalar(Math.max(0.001, st.userData.s * outBack(cas(t, 1100 + i * 55, 750)))));
+    if (t > 3600) postaveno = true;
+  }
+  if (!reduce) postav(0);
+
   function snimek(t) {
     if (!videt || document.hidden) { bezi = false; return; }
 
-    if (animace) {
-      const k = Math.min(1, (t - animace.t0) / animace.trvani);
+    if (!uzivatelTahal) {
       sfera.setFromVector3(kamera.position.clone().sub(ovl.target));
-      sfera.phi = animace.od + (animace.do - animace.od) * ease(k);
-      nastavKameru();
-      if (k >= 1) animace = null;
+      const d = cilPolar - sfera.phi;
+      if (Math.abs(d) > 0.0005) { sfera.phi += d * (reduce ? 1 : 0.075); nastavKameru(); }
     }
+    if (stavbaStart !== null) postav(t - stavbaStart);
 
     // stěny a střecha – plynulý přechod
     const v = steny.scale.y + (vyskaCil - steny.scale.y) * (reduce ? 1 : 0.08);
