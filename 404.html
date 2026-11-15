@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stránka se připravuje – Poutníci</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,800..900&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=Figtree:wght@400;500;700;800&family=Lobster&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header class="hlavicka">
+    <div class="hlavicka__obal">
+      <a class="logo" href="index.html" aria-label="Poutníci – chata">Poutníci</a>
+      <button class="menu-tl" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="skryte">Menu</span><span class="menu-tl__car" aria-hidden="true"></span>
+      </button>
+      <nav class="menu" id="menu" aria-label="Hlavní menu">
+        <a href="404.html">Chci se přidat</a>
+        <a href="404.html">Plechovky</a>
+        <a href="404.html">Akce</a>
+        <a href="404.html">O nás</a>
+        <a href="index.html">Chata</a>
+        <a href="404.html">Oddíl</a>
+        <a href="404.html">Fotky</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="list chyba404">
+    <p class="chyba404__cislo odhal" aria-hidden="true">404</p>
+    <h1 class="nadpis odhal">Tady ještě nic není</h1>
+    <p class="odstavec odhal">Tahle část webu se teprve staví – jako naše chata. Zatím se můžete podívat, jak chata vypadá a kdy je volná.</p>
+    <p class="odhal"><a class="pilulka" href="index.html">Zpět na chatu</a></p>
+    <svg class="chyba404__plan kresli odhal" viewBox="0 0 540 300" aria-hidden="true"><use href="#plan404"/></svg>
+  </main>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="plan404" viewBox="0 0 540 300">
+      <g fill="none" stroke="currentColor" stroke-width="15">
+        <path pathLength="1" d="M7.5 7.5H308V272.5H7.5Z"/>
+        <path pathLength="1" d="M308 7.5H507.5V172H308"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <style>
+    .chyba404 { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 28px; position: relative; overflow: hidden; }
+    .chyba404__cislo { font-family: var(--pismo-nadpis); font-weight: 900; font-size: clamp(120px, 22vw, 360px); line-height: .8; color: var(--modra-svetla); }
+    .chyba404__plan { position: absolute; right: var(--okraj); bottom: 10%; width: min(36vw, 420px); color: var(--modra-svetla); z-index: -1; }
+    .js .chyba404__plan.videt { stroke-dashoffset: 0; }
+  </style>
+  <script src="assets/js/stranka.js"></script>
+</body>
+</html>
