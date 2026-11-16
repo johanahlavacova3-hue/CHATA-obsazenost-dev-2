@@ -79,6 +79,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
 .odstavec { max-width: max(320px, calc(664 * var(--u))); }
 .maly-text { font-size: max(15px, calc(22 * var(--u))); line-height: 1.17; }
 .ctverec { flex: none; width: max(72px, calc(120 * var(--u))); aspect-ratio: 1; background: var(--placeholder); }
+.ikona { flex: none; width: max(72px, calc(120 * var(--u))); aspect-ratio: 1; object-fit: contain; display: block; }
 
 /* 4. Hlavička + menu ------------------------------------ */
 .hlavicka {
@@ -323,7 +324,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; letter-
   .list--rabu .foto { aspect-ratio: 4 / 3.3; }
 
   .vybaveni { grid-template-columns: 1fr; row-gap: 20px; margin-top: 28px; }
-  .ctverec { width: 76px; }
+  .ctverec, .ikona { width: 76px; }
   .polozka { gap: 14px; }
   .polozka .titulek { margin: 0 0 4px; }
   .plany { flex-direction: column; align-items: center; padding-top: 28px; gap: 12px; }
