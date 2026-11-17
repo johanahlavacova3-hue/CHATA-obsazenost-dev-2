@@ -45,7 +45,9 @@ Scéna (`assets/js/scena3d.js`) zobrazuje pozemek jako architektonickou maketu n
 - **V zimě** (podle skutečného počasí) jsou vrstvy i koruny bílé.
 - **Pohledy:** Z dronu, Podkroví a Přízemí. Patra se odříznou vodorovným řezem a řez je černý.
 
-Barvy makety najdeš na začátku `scena3d.js` (objekt `BARVY`).
+Barvy makety najdeš na začátku `scena3d.js` (objekt `BARVY`). Chata má původní materiály z modelu, interiér je hnědá OSB.
+
+**Testovací přepínač** (vlevo nahoře ve scéně) přepíná Teď / Jaro / Léto / Podzim / Zima a Den / Noc. Před spuštěním webu ho vypni v config.js: `SCENA: { TEST: false }`.
 
 ### Nová verze modelu z Blenderu
 1. Export: **glTF Binary (.glb)**, „+Y Up“ zapnuto, „Apply Modifiers“ zapnuto.

@@ -18,7 +18,7 @@
   --text: #111111;
   --sedy: #a1a1a1;
   --placeholder: #d9d9d9;
-  --modra: #254eb9;
+  --modra: #1a3ff4;
   --modra-svetla: #d9dfed;
   --panel: #e8ebf2;
   --oranz: #ef8733;
@@ -79,7 +79,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   text-decoration: none; white-space: nowrap; border-radius: 10px;
 }
 .menu a:hover { background: rgba(217, 223, 237, .6); }
-.menu a[aria-current="page"] { background: var(--modra-svetla); }
+.menu a[aria-current="page"] { background: var(--modra); color: #fff; }
+.menu a[aria-current="page"]:hover { background: var(--modra); }
 
 .menu-tl {
   display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
@@ -121,6 +122,11 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 .scena__napoveda { position: absolute; right: 16px; bottom: 22px; z-index: 3; font-size: 13px; font-weight: 700; --w: 700; color: var(--modra); opacity: .75; pointer-events: none; }
 .scena__napoveda--pryc { display: none; }
 .scena__stav { position: absolute; right: 12px; top: 12px; z-index: 3; margin: 0; padding: 7px 12px; border-radius: 10px; background: rgba(255, 255, 255, .88); font-size: 12px; font-weight: 700; --w: 700; color: #111; pointer-events: none; }
+.scena__test { position: absolute; left: 12px; top: 12px; z-index: 3; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 4px; border-radius: 10px; background: rgba(255,255,255,.88); font-size: 11px; font-weight: 700; --w: 700; text-transform: uppercase; }
+.scena__test span { padding: 0 6px; color: #8a8a8a; }
+.scena__test i { width: 1px; height: 16px; margin: 0 4px; background: #ccc; }
+.scena__test button { border: 0; background: transparent; padding: 5px 8px; border-radius: 7px; cursor: pointer; font-family: var(--pismo); font-size: 11px; font-weight: 700; --w: 700; text-transform: uppercase; color: #111; }
+.scena__test button[aria-pressed="true"] { background: var(--modra); color: #fff; }
 .scena__napoveda { color: #fff; opacity: .9; text-shadow: 0 1px 3px rgba(0,0,0,.45); }
 
 /* galerie */
@@ -245,12 +251,16 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
     text-box: trim-both cap alphabetic;
   }
   /* levá hrana textu z návrhu minus odsazení 22 */
-  .menu__pridat    { left: calc((862 - 22) * var(--u)); }
   .menu__o-nas     { left: calc((1327 - 22) * var(--u)); }
   .menu__akce      { left: calc((1412 - 22) * var(--u)); }
   .menu__oddil     { left: calc((1499 - 22) * var(--u)); }
   .menu__plechovky { left: calc((1593 - 22) * var(--u)); }
   .menu__chata     { left: calc((1739 - 22) * var(--u)); }
+  /* aktivní položka: malá modrá pilulka 89 × 21 od y 18 (verzálky dál od y 24) */
+  .menu a[aria-current="page"] {
+    left: calc(1718 * var(--u)); top: calc(18 * var(--u)); width: calc(89 * var(--u)); height: calc(21 * var(--u));
+    padding: calc(6 * var(--u)) 0 0; text-align: center; border-radius: calc(11 * var(--u));
+  }
   .menu__fotky     { left: calc((1849 - 22) * var(--u)); }
 
   /* list = plátno 1920 × 1022 (1080 − hlavička) */
@@ -272,8 +282,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 
   /* --- 2. O RÁBU --- */
   .list--rabu .pilulka {
-    display: block; left: calc(520 * var(--u)); top: calc(402 * var(--u)); width: calc(179 * var(--u)); height: calc(39 * var(--u));
-    padding: calc(13 * var(--u)) 0 0; text-align: center; text-box: trim-both cap alphabetic;
+    display: block; left: calc(520 * var(--u)); top: calc(402 * var(--u)); width: calc(180 * var(--u)); height: calc(40 * var(--u));
+    padding: calc(13.5 * var(--u)) 0 0; text-align: center; text-box: trim-both cap alphabetic;
     border-radius: calc(10 * var(--u)); font-size: calc(15 * var(--u));
   }
   .list--rabu .foto { left: calc(969 * var(--u)); top: calc(171 * var(--u)); width: calc(942 * var(--u)); height: calc(802 * var(--u)); border-radius: calc(28 * var(--u)); }
@@ -307,11 +317,11 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   .pudorys--spodni { top: calc(470 * var(--u)); }
 
   /* --- 5. CENÍK --- */
-  .list--cenik .trava { left: 0; right: 0; top: calc(582 * var(--u)); height: calc(140 * var(--u)); margin: 0; background-size: calc(300 * var(--u)) calc(140 * var(--u)); }
-  .list--cenik .cenik__chata { left: calc(846 * var(--u)); top: calc(86 * var(--u)); width: calc(993 * var(--u)); height: auto; max-width: none; margin: 0; }
-  .cenik__cena, .cenik__pozn { top: calc(881 * var(--u)); font-size: calc(104 * var(--u)); white-space: nowrap; }
-  .cenik__cena { left: calc(42 * var(--u)); }
-  .cenik__pozn { left: calc(963 * var(--u)); }
+  .list--cenik .trava { left: 0; right: 0; top: calc(788 * var(--u)); height: calc(140 * var(--u)); margin: 0; background-size: calc(300 * var(--u)) calc(140 * var(--u)); }
+  .list--cenik .cenik__chata { left: calc(847 * var(--u)); top: calc(291 * var(--u)); width: calc(993 * var(--u)); height: auto; max-width: none; margin: 0; }
+  .cenik__cena, .cenik__pozn { white-space: nowrap; }
+  .cenik__cena { left: calc(42 * var(--u)); top: calc(400 * var(--u)); font-size: calc(64 * var(--u)); }
+  .cenik__pozn { left: calc(31 * var(--u)); top: calc(487 * var(--u)); font-size: calc(62 * var(--u)); }
 
   /* --- 6. REZERVACE --- */
   .kontakt { display: block; left: calc(39 * var(--u)); width: calc(800 * var(--u)); }

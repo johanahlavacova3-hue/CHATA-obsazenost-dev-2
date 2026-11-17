@@ -15,6 +15,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const CFG = Object.assign({
   SLOZKA: 'assets/3d/',
@@ -25,24 +29,24 @@ const CFG = Object.assign({
   SEVER: 0,
   GPS: [49.876, 13.897],
   POCASI: true,
+  TEST: true,                    // testovací přepínač období a dne/noci v rohu scény
 }, (window.CHATA && window.CHATA.SCENA) || {});
 
 /* paleta makety */
 const BARVY = {
-  pozadi: 0x1c1b19,
-  karton: 0xcdb48e,      // vrchy vrstev
-  hrana: 0x2b241d,       // tenká tmavá hrana vrstvy
-  bok: 0xa88e6a,         // bok vrstvy (lepenka)
-  sokl: 0x3a3129,        // boky celé makety
-  drevo: 0xd6b083,       // stěny chaty (balza)
-  bila: 0xeeeae3,        // střecha, komín, základ
-  osb: 0x4a3122,         // interiér – OSB natřená tmavě hnědou
-  linka: 0x2a2826,       // okapy, rámy
-  koruna: 0xd9cbb1,      // pěnové koruny stromů
-  kmen: 0x8c7a62,
-  voda: 0x5b7383,
+  pozadi: 0x1a1a19,
+  noc: 0x0c0d10,
+  karton: 0xcfcbc2,      // vrchy vrstev – neutrální světlá lepenka
+  hrana: 0x3b3935,       // tenká tmavá hrana vrstvy
+  bok: 0xaca79d,         // bok vrstvy
+  sokl: 0x2e2c29,        // boky celé makety
+  osb: 0x6e4b33,         // interiér – OSB natřená hnědou
+  koruna: 0xdedad2,      // pěnové koruny stromů
+  kmen: 0x8f8a80,
+  voda: 0x5f7889,
   snih: 0xf6f5f2,
 };
+const KORUNY = { jaro: 0xd6dfca, leto: 0xdedad2, podzim: 0xe6d3b6 };
 
 const box = document.getElementById('scena');
 if (box) start().catch((e) => console.warn('3D scéna se nespustila:', e));
@@ -90,6 +94,12 @@ async function start() {
   const pmrem = new THREE.PMREMGenerator(renderer);
   scena.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;   // měkké „ateliérové“ světlo
   const kamera = new THREE.PerspectiveCamera(28, 1, 0.5, 2000);
+  // jemná záře oken a ohně (bloom) – v noci silnější
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scena, kamera));
+  const zare = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.2, 0.6, 0.9);
+  composer.addPass(zare);
+  composer.addPass(new OutputPass());
 
   const ovl = new OrbitControls(kamera, renderer.domElement);
   ovl.enablePan = false;
@@ -231,31 +241,19 @@ async function start() {
     return m;
   }
 
-  // materiály makety: jen čisté barvy, žádné fotografické textury
-  const M = {
-    drevo: rezovat(mat(BARVY.drevo, { roughness: 0.75 }), true, true),
-    bila: rezovat(mat(BARVY.bila, { roughness: 0.8 }), false, false),
-    strecha: rezovat(mat(BARVY.bila, { roughness: 0.85 }), false, false),
-    linka: rezovat(mat(BARVY.linka, { roughness: 0.5 }), false, false),
-    sklo: rezovat(mat(0xffe2b0, { emissive: 0xffb45e, emissiveIntensity: 0.5, roughness: 0.3 }), false, false),
-    kamen: mat(BARVY.bila),
-    lavice: mat(BARVY.drevo, { roughness: 0.75 }),
-  };
-  okna.push(M.sklo);
-  snehoveMat.push(M.strecha);
+  // chata v původních materiálech (dřevo, plech, sklo) – jen řez a OSB uvnitř
+  const hotove = new Set();
   model.traverse((m) => {
     if (!m.isMesh) return;
     m.castShadow = m.receiveShadow = true;
-    const jm = m.material.name.toLowerCase();
+    const mt = m.material, jm = mt.name.toLowerCase();
     pomocny.setFromObject(m);
     const vChate = chataBox.intersectsBox(pomocny);
     if (jm === 'voda') { m.visible = false; vodniBox.union(pomocny); return; }
-    if (jm === 'kamen') { kameny.union(pomocny); m.material = M.kamen; }
-    else if (/sklo/.test(jm)) { m.material = M.sklo; m.castShadow = false; }
-    else if (/strecha/.test(jm)) { m.material = M.strecha; strechaMeshe.push(m); }
-    else if (/okap/.test(jm)) m.material = M.linka;
-    else if (/beton|komin/.test(jm)) m.material = M.bila;
-    else if (/drevo/.test(jm)) m.material = vChate ? M.drevo : M.lavice;
+    if (jm === 'kamen') kameny.union(pomocny);
+    if (/sklo/.test(jm)) { mt.emissive = new THREE.Color(0xffb45e); mt.emissiveIntensity = 0.3; if (!okna.includes(mt)) okna.push(mt); m.castShadow = false; }
+    if (/strecha/.test(jm)) { strechaMeshe.push(m); if (!snehoveMat.includes(mt)) { mt.userData.barva = mt.color.clone(); snehoveMat.push(mt); } }
+    if (vChate && !hotove.has(mt)) { hotove.add(mt); rezovat(mt, !/strecha|sklo|okap|beton|komin/.test(jm), /drevo/.test(jm)); }
     if (!vChate) {   // věci mimo chatu (ohniště, lavice) posadit na vrstvu terénu
       const c = pomocny.getCenter(new THREE.Vector3());
       m.position.y += (vyskaQ(c.x, c.z) - mapa(c.x, c.z)) / (m.parent ? m.parent.getWorldScale(new THREE.Vector3()).y : 1);
@@ -287,15 +285,17 @@ async function start() {
     ohniste.userData = { uhliky, svetlo };
     scena.add(ohniste);
   }
-  const interier = [[0, 1.9], [CFG.PODKROVI_NAD_PODLAHOU, 1.3]].map(([dy, hh]) => {
-    const s = new THREE.PointLight(0xffb066, 0, 4.5, 2);
-    s.position.set(stredChaty.x, CH.podlaha + dy + hh, stredChaty.z);
+  // teplé světlo z chaty: uvnitř + přes okna na trávu kolem (útulná louže světla)
+  const interier = [[-0.3, 0, 1.9], [0.3, 0, 1.9], [0, CFG.PODKROVI_NAD_PODLAHOU, 1.3]].map(([fx, dy, hh]) => {
+    const s = new THREE.PointLight(0xffa955, 0, 16, 1.6);
+    s.position.set(stredChaty.x + fx * (CH.max[0] - CH.min[0]), CH.podlaha + dy + hh, stredChaty.z);
     scena.add(s);
     return s;
   });
 
   /* ================= stromy: pěnové koruny ================= */
   const korunaMat = mat(BARVY.koruna, { roughness: 1 });
+  korunaMat.userData.barva = C(BARVY.koruna);
   const kmenMat = mat(BARVY.kmen, { roughness: 1 });
   snehoveMat.push(korunaMat);
   {
@@ -345,7 +345,18 @@ async function start() {
   const pevnyCas = url.get('cas') ? new Date(url.get('cas')) : null;
   const pevnySnih = url.has('snih') ? url.get('snih') === '1' : null;
   const pocasi = { snih: null };
-  const ted = () => (pevnyCas && !isNaN(pevnyCas) ? pevnyCas : new Date());
+  const testStav = { sezona: null, noc: false };
+  const TESTDATA = { jaro: [3, 25], leto: [6, 15], podzim: [9, 14], zima: [0, 20] };
+  const ted = () => {
+    if (testStav.sezona) {
+      const [m, d] = TESTDATA[testStav.sezona], k = new Date(2026, m, d);
+      k.setHours(testStav.noc ? 23 : 14, testStav.noc ? 30 : 30);
+      return k;
+    }
+    if (testStav.noc) { const k = new Date(); k.setHours(23, 30); return k; }
+    return pevnyCas && !isNaN(pevnyCas) ? pevnyCas : new Date();
+  };
+  const sezonaZ = (d) => { const m = d.getMonth(); return m >= 2 && m <= 4 ? 'jaro' : m >= 5 && m <= 7 ? 'leto' : m >= 8 && m <= 10 ? 'podzim' : 'zima'; };
   function polohaSlunce(d, lat, lon) {   // NOAA → výška a azimut (od severu po směru hodin), radiány
     const r = Math.PI / 180;
     const g = (2 * Math.PI / 365) * ((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 864e5);
@@ -358,13 +369,30 @@ async function start() {
     return { vy, az };
   }
 
+  let testUI = null;
+  if (CFG.TEST) {
+    testUI = document.createElement('div');
+    testUI.className = 'scena__test';
+    testUI.innerHTML = '<span>Test</span>' +
+      [['', 'Teď'], ['jaro', 'Jaro'], ['leto', 'Léto'], ['podzim', 'Podzim'], ['zima', 'Zima']].map(([k, t]) => `<button type="button" data-s="${k}">${t}</button>`).join('') +
+      '<i></i><button type="button" data-n="false">Den</button><button type="button" data-n="true">Noc</button>';
+    testUI.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.s !== undefined) testStav.sezona = b.dataset.s || null;
+      if (b.dataset.n !== undefined) testStav.noc = b.dataset.n === 'true';
+      nastavCas();
+    });
+    box.appendChild(testUI);
+  }
+
   function nastavCas() {
     const d = ted();
     const { vy: e, az: az0 } = polohaSlunce(d, CFG.GPS[0], CFG.GPS[1]);
     const az = az0 - THREE.MathUtils.degToRad(CFG.SEVER), sinE = Math.sin(e);
     const den = smooth(-0.1, 0.08, sinE), nizko = 1 - smooth(0.05, 0.35, sinE);
     const mes = d.getMonth();
-    const sn = (pevnySnih ?? pocasi.snih ?? ((mes === 11 && d.getDate() >= 15) || mes <= 1)) ? 1 : 0;
+    const sezona = sezonaZ(d);
+    const sn = (testStav.sezona ? testStav.sezona === 'zima' : (pevnySnih ?? pocasi.snih ?? ((mes === 11 && d.getDate() >= 15) || mes <= 1))) ? 1 : 0;
 
     // slunce: ve dne skutečný směr, v noci „měsíc“ z druhé strany, slabě a do modra
     const vyska = den > 0.02 ? Math.max(sinE, 0.12) : 0.6;
@@ -372,24 +400,30 @@ async function start() {
     const smer = new THREE.Vector3(Math.sin(az2) * Math.cos(Math.asin(vyska)), vyska, -Math.cos(az2) * Math.cos(Math.asin(vyska)));
     slunce.position.copy(stredChaty).addScaledVector(smer, 250);
     slunce.target.position.copy(stredChaty);
-    slunce.intensity = 0.35 + 2.3 * den;
-    slunce.color.set(0x9fb2e0).lerp(C(0xfff3e4), den).lerp(C(0xffb070), nizko * den * 0.6);
-    hemi.intensity = 0.12 + 0.3 * den;
-    vsechnyMat.forEach((m) => (m.envMapIntensity = 0.12 + 0.88 * den));
-    renderer.toneMappingExposure = 0.85 + 0.25 * (1 - den);
+    slunce.intensity = 0.12 + 2.4 * den;
+    slunce.color.set(0x8fa3d6).lerp(C(0xfff3e4), den).lerp(C(0xffb070), nizko * den * 0.6);
+    hemi.intensity = 0.04 + 0.32 * den;
+    hemi.color.set(0x6d7fb0).lerp(C(0xffffff), den);
+    vsechnyMat.forEach((m) => (m.envMapIntensity = 0.04 + 0.96 * den));
+    renderer.toneMappingExposure = 0.8 + 0.12 * den;
+    if (sn) hemi.intensity += 0.05 * (1 - den);   // sníh v noci trochu svítí
+    scena.background.set(BARVY.noc).lerp(C(BARVY.pozadi), den);
 
     kartonMat.color.set(sn ? BARVY.snih : BARVY.karton);
-    snehoveMat.forEach((m) => m.color.set(sn ? BARVY.snih : m === korunaMat ? BARVY.koruna : BARVY.bila));
-    korunyMesh.visible = true;
+    korunaMat.color.set(sn ? BARVY.snih : KORUNY[sezona] ?? BARVY.koruna);
+    snehoveMat.forEach((m) => m !== korunaMat && m.userData.barva && m.color.copy(m.userData.barva).lerp(C(BARVY.snih), sn * 0.85));
 
     const tma = 1 - den;
-    M.sklo.emissiveIntensity = 0.5 + tma * 3;
-    interier.forEach((s) => (s.intensity = tma * 8));
+    okna.forEach((m) => (m.emissiveIntensity = 0.3 + tma * 6));
+    interier.forEach((s) => (s.intensity = tma * 22));
+    zare.strength = 0.12 + tma * 0.75;
+    zare.threshold = 0.95 - tma * 0.25;
     if (ohniste) {
       const ohen = !sn ? tma : 0;
-      ohniste.userData.uhliky.material.emissiveIntensity = ohen * 3;
+      ohniste.userData.uhliky.material.emissiveIntensity = ohen * 4;
       ohniste.userData.svetlo.intensity = ohen * 50;
     }
+    if (testUI) testUI.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.s ? b.dataset.s === (testStav.sezona || '') : b.dataset.n === String(testStav.noc))));
 
     const hod = d.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit', timeZone: pevnyCas ? undefined : 'Europe/Prague' });
     const doba = den < 0.15 ? 'noc' : nizko > 0.6 ? (d.getHours() < 12 ? 'svítání' : 'soumrak') : 'den';
@@ -469,13 +503,15 @@ async function start() {
       if (k >= 1) let_ = null;
     }
     ovl.update();
-    renderer.render(scena, kamera);
+    composer.render();
     if (let_ || tahani) requestAnimationFrame(snimek); else bezi = false;
   }
   function velikost() {
     const w = box.clientWidth, h = box.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
+    composer.setPixelRatio(renderer.getPixelRatio());
+    composer.setSize(w, h);
     kamera.aspect = w / h;
     kamera.updateProjectionMatrix();
     if (!let_) pouzij(stavKamery(POHLEDY[pohled]));
