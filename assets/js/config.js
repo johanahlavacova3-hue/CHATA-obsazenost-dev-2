@@ -9,6 +9,16 @@ window.CHATA = {
   MESICU_DOPREDU: 120,   // 10 let dopředu
 
   // Fotky v galerii – v tomhle pořadí. Nahraď vlastními (ideálně 2000 px na šířku).
+  // 3D scéna chaty
+  SCENA: {
+    MODEL_URL: '',            // vlastní model: 'assets/3d/chata.glb' (prázdné = náhradní chata z půdorysu)
+    MODEL_OTOCENI: 0,         // otočení modelu (stupně)
+    VYSKA_PODKROVI: 2.95,     // podlaha podkroví nad terénem (m) – podle ní se řeže pohled „Podkroví“
+    POZEMEK: [34, 22],        // šířka × hloubka pozemku (m)
+    SEVER: 0,                 // kam je sever v pohledu z dronu (stupně)
+    GPS: [49.876, 13.897],    // poloha chaty – slunce a počasí
+    POCASI: true,             // sníh a mraky podle skutečného počasí (open-meteo.com)
+  },
   GALERIE: [
     { src: 'assets/img/galerie/05-okno.jpg', popis: 'Výhled z okna chaty' },
     { src: 'assets/img/galerie/01.jpg', popis: 'Chata zvenku' },

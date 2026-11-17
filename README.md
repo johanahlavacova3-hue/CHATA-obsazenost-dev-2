@@ -34,3 +34,18 @@ Kvůli 3D (ES moduly) otevírej přes lokální server, ne dvojklikem: `npx serv
 ## Rozestupy
 Na počítači je vše v jednotkách `--u` = 1 px návrhu (frame 1920 px), takže rozestupy odpovídají Figmě
 na jakékoli šířce. Pod 1100 px tablet, pod 700 px mobil – vlastní rozvržení.
+
+## 3D model chaty
+
+Scéna (`assets/js/scena3d.js`) ukazuje mýtinu z dronu. Slunce se počítá podle skutečného času a polohy (`GPS` v config.js). Roční období mění barvu trávy a listí. Sníh se bere ze skutečného počasí (open-meteo.com); když počasí není dostupné, padá od poloviny prosince do konce února. V noci svítí okna a v létě ohniště.
+
+### Vlastní model
+1. Exportuj **glTF binární (.glb)**, Y nahoru, v metrech (cm/mm se poznají samy).
+2. Počátek dej doprostřed chaty na úroveň terénu (scéna ho stejně vycentruje).
+3. Materiály pojmenuj: `strecha…` (zasněží se a v řezu se skryje), `okno…`/`sklo…` (v noci svítí).
+4. Ulož jako `assets/3d/chata.glb` a v config.js nastav `SCENA.MODEL_URL: 'assets/3d/chata.glb'`.
+5. Nastav `VYSKA_PODKROVI` (výška podlahy podkroví nad terénem, m) a případně `MODEL_OTOCENI`.
+
+Pohledy Podkroví a Přízemí model nijak nerozdělují. Odříznou ho vodorovnou rovinou ve výšce podlahy + 1,25 m a stěny v řezu se vybarví černě jako v půdorysu.
+
+Náhled jiného času: `index.html?cas=2027-01-15T21:30&snih=1`
