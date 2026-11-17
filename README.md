@@ -51,7 +51,17 @@ Scéna (`assets/js/scena3d.js`) zobrazuje skutečný pozemek z Blenderu: terén,
    npm install            # jen poprvé
    node priprav-model.mjs ~/Downloads/chata_POZEMEK.glb ../assets/3d
    ```
-3. Skript vytvoří `assets/3d/chata.glb` (zhruba 2 MB), `pozemek.json` a `trava.webp`.
+3. Skript vytvoří `assets/3d/chata.glb` (zhruba 2 MB) a `pozemek.json`.
+
+### Textura louky z fotek
+Louka je složená ze dvou skutečných textur: `louka-leto.webp` (suchá letní tráva) a `louka-jaro.webp` (zelená jarní). Scéna je míchá ve skvrnách podle ročního období. Novou texturu uděláš z fotky:
+```
+python3 nastroje/textura-louky.py fotka.jpg x0 y0 x1 y1 natazeni assets/3d/louka-leto.webp
+```
+- `x0 y0 x1 y1` je výřez trávy bez lidí a předmětů.
+- `natazeni` je srovnání perspektivy, obvykle 2–3.
+
+Interiér (podlahy, stěny a stropy uvnitř chaty) je tmavě hnědá natřená OSB a kreslí ji přímo scéna. Hladinu potoka doplní scéna nad korytem z modelu (materiál „voda“).
 
 Co skript dělá:
 - Terén (materiál „Material“) převede na výškovou mapu.

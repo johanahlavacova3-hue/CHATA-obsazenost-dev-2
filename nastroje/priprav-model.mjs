@@ -89,8 +89,7 @@ const stromy = uzly.filter((n) => matUzlu(n).includes('Material.002')).map((n) =
 });
 
 /* ---------- textura trávy terénu zvlášť ---------- */
-const travaTex = teren.flatMap((n) => n.getMesh().listPrimitives()).map((p) => p.getMaterial()?.getBaseColorTexture()).find(Boolean);
-if (travaTex) await sharp(Buffer.from(travaTex.getImage())).resize(1024, 1024).webp({ quality: 82 }).toFile(path.join(VYSTUP, 'trava.webp'));
+// (textury louky se dělají z fotek: nastroje/textura-louky.py)
 
 // pryč: terén, koule stromů, drobná tráva z knihovny
 for (const n of uzly) {
@@ -228,5 +227,5 @@ const info = {
 };
 fs.writeFileSync(path.join(VYSTUP, 'pozemek.json'), JSON.stringify(info));
 const kb = (f) => Math.round(fs.statSync(path.join(VYSTUP, f)).size / 1024) + ' kB';
-console.log('chata.glb', kb('chata.glb'), '| pozemek.json', kb('pozemek.json'), '| trava.webp', fs.existsSync(path.join(VYSTUP, 'trava.webp')) ? kb('trava.webp') : '-');
+console.log('chata.glb', kb('chata.glb'), '| pozemek.json', kb('pozemek.json'));
 console.log('terén', nx, '×', nz, 'stromů', stromy.length, 'chata', JSON.stringify(info.chata));

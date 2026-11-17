@@ -4,7 +4,7 @@
  * Data (připraví nastroje/priprav-model.mjs z exportu z Blenderu):
  *   assets/3d/chata.glb      chata, ohniště, lavice, potok (materiály opravené, textury WebP, meshopt)
  *   assets/3d/pozemek.json   výšková mapa terénu + polohy stromů + rozměry chaty
- *   assets/3d/trava.webp     textura trávy na terén
+ *   assets/3d/louka-*.webp   textury louky z fotek (nastroje/textura-louky.py)
  *
  * • Pohled z dronu, terén vyplňuje celý panel (kolem pozemku se dopočítá les).
  * • Fyzikální obloha a slunce podle skutečného času nad chatou, odrazy oblohy na plechu, skle a vodě.
@@ -59,10 +59,11 @@ async function start() {
       if (e.total) stav.textContent = `Načítám chatu… ${Math.round((e.loaded / e.total) * 100)} %`;
     });
   }
-  const [data, gltf, travaTex, vodaTex] = await Promise.all([
+  const [data, gltf, travaTex, jaroTex, vodaTex] = await Promise.all([
     fetch(CFG.SLOZKA + 'pozemek.json').then((r) => r.json()),
     nactiModel(),
-    new THREE.TextureLoader().loadAsync(CFG.SLOZKA + 'trava.webp'),
+    new THREE.TextureLoader().loadAsync(CFG.SLOZKA + 'louka-leto.webp'),    // z fotek louky v létě (suchá)
+    new THREE.TextureLoader().loadAsync(CFG.SLOZKA + 'louka-jaro.webp'),    // z fotek louky na jaře (zelená)
     new THREE.TextureLoader().loadAsync(CFG.SLOZKA + 'voda-normal.webp'),
   ]);
 
@@ -131,7 +132,7 @@ async function start() {
   for (let i = 0; i < tp.count; i++) {
     const x = tp.getX(i), z = tp.getZ(i);
     tp.setY(i, vyska(x, z));
-    uv.setXY(i, x / 3.2, z / 3.2);                         // tráva se opakuje po 3,2 m
+    uv.setXY(i, x / 2.6, z / 2.6);                         // dlaždice trávy 2,6 m
     sumy[i] = sum(x * 2.3, z * 2.3) * 0.45 + sum(x * 0.5 + 9, z * 0.5) * 0.35 + sum(x * 6.1, z * 5.3) * 0.2;
     zony[i] = smooth(0, 8, venku(x, z));                    // 0 = louka, 1 = les
   }
@@ -140,16 +141,25 @@ async function start() {
   travaTex.wrapS = travaTex.wrapT = THREE.RepeatWrapping;
   travaTex.colorSpace = THREE.SRGBColorSpace;
   travaTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  jaroTex.wrapS = jaroTex.wrapT = THREE.RepeatWrapping;
+  jaroTex.colorSpace = THREE.SRGBColorSpace;
+  jaroTex.anisotropy = travaTex.anisotropy;
   const terenMat = new THREE.MeshStandardMaterial({ map: travaTex, vertexColors: true, roughness: 1 });
-  // proti opakování textury: druhé čtení té samé textury v 23× větším měřítku a pootočené
+  const zelen = { value: 0.5 };   // 0 = suchá letní louka, 1 = zelená jarní
+  // dvě skutečné textury (suchá / zelená) míchané ve skvrnách + druhé čtení ve velkém měřítku proti opakování
   terenMat.onBeforeCompile = (sh) => {
-    sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>', `
+    sh.uniforms.jaro = { value: jaroTex };
+    sh.uniforms.zelen = zelen;
+    sh.fragmentShader = 'uniform sampler2D jaro;\nuniform float zelen;\n' + sh.fragmentShader.replace('#include <map_fragment>', `
       #ifdef USE_MAP
-        vec4 t1 = texture2D( map, vMapUv );
-        vec2 uv2 = mat2(0.8, -0.6, 0.6, 0.8) * vMapUv * 0.043;
-        vec4 t2 = texture2D( map, uv2 );
-        vec4 t3 = texture2D( map, vMapUv * 0.31 + 0.5 );
-        diffuseColor *= mix(t1, t3, 0.35) * (0.55 + 0.9 * t2.g / max(0.2, (t2.r + t2.g + t2.b) / 3.0) * 0.5);
+        vec2 uvB = mat2(0.8, -0.6, 0.6, 0.8) * vMapUv * 0.37 + 0.31;
+        vec4 suche = mix(texture2D( map, vMapUv ), texture2D( map, uvB ), 0.4);
+        vec4 zelene = mix(texture2D( jaro, vMapUv * 0.93 + 0.5 ), texture2D( jaro, uvB * 1.1 ), 0.4);
+        vec2 uvC = mat2(0.6, 0.8, -0.8, 0.6) * vMapUv * 0.028;
+        float skvrny = texture2D( jaro, uvC ).g / max(0.15, dot(texture2D( jaro, uvC ).rgb, vec3(0.333)));
+        float sk2 = texture2D( map, vMapUv * 0.061 + 0.2 ).r;
+        float m = smoothstep(0.15, 0.85, zelen + (skvrny - 1.1) * 1.4 + (sk2 - 0.55) * 0.8);
+        diffuseColor *= mix(suche, zelene, m) * (0.85 + 0.3 * sk2);
       #endif`);
   };
   const teren = new THREE.Mesh(tg, terenMat);
@@ -164,7 +174,32 @@ async function start() {
   const rezRovina = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1e5);
   const okna = [], strechy = [], strechaMeshe = [], chataBox = new THREE.Box3(new THREE.Vector3(...CH.min).addScalar(-0.6), new THREE.Vector3(...CH.max).addScalar(0.6));
   let ohniste = null;
+  const vodniBox = new THREE.Box3();
   const kameny = new THREE.Box3();
+
+  /* OSB deska natřená tmavě hnědou – podlahy, stěny a stropy uvnitř chaty */
+  const osbTex = (() => {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 512;
+    const g = cv.getContext('2d');
+    g.fillStyle = '#4a3020'; g.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 2600; i++) {      // třísky
+      const x = rnd() * 512, y = rnd() * 512, w = 4 + rnd() * 9, h = 18 + rnd() * 46, l = 17 + rnd() * 11;
+      g.save(); g.translate(x, y); g.rotate((rnd() - 0.5) * 1.2 + (i % 2 ? 0 : 1.57));
+      g.fillStyle = `hsl(${22 + rnd() * 8}, ${38 + rnd() * 12}%, ${l}%)`;
+      g.fillRect(-w / 2, -h / 2, w, h);
+      for (const dx of [-512, 512]) { g.translate(dx, 0); g.fillRect(-w / 2, -h / 2, w, h); g.translate(-dx, 0); }
+      g.restore();
+    }
+    g.fillStyle = 'rgba(58,36,22,0.45)'; g.fillRect(0, 0, 512, 512);   // nátěr sjednotí odstín
+    const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    return t;
+  })();
+  const OSB = {
+    osb: { value: osbTex },
+    osbStred: { value: new THREE.Vector3((CH.min[0] + CH.max[0]) / 2, 0, (CH.min[2] + CH.max[2]) / 2) },
+    osbPul: { value: new THREE.Vector2((CH.max[0] - CH.min[0]) / 2, (CH.max[2] - CH.min[2]) / 2) },
+    osbPodlahy: { value: new THREE.Vector2(CH.podlaha, CH.podlaha + CFG.PODKROVI_NAD_PODLAHOU) },
+  };
 
   function rezovat(mat, cerne = true) {   // řez rovinou; vnitřek stěn v řezu černý jako čára v půdorysu
     if (mat.userData.rez) return;
@@ -173,11 +208,30 @@ async function start() {
     mat.clipShadows = true;
     mat.side = THREE.DoubleSide;
     if (!cerne) return;                   // tenké plochy (plech, sklo, okapy) – rub normálně
+    const osb = /drevo/.test(mat.name);
     mat.onBeforeCompile = (sh) => {
       sh.fragmentShader = sh.fragmentShader.replace('#include <clipping_planes_fragment>',
         '#include <clipping_planes_fragment>\n if (!gl_FrontFacing) { gl_FragColor = vec4(0.05, 0.05, 0.05, 1.0); return; }');
+      if (!osb) return;
+      Object.assign(sh.uniforms, OSB);
+      sh.vertexShader = 'varying vec3 vSvP;\nvarying vec3 vSvN;\n' + sh.vertexShader.replace('#include <project_vertex>',
+        '#include <project_vertex>\n vSvP = (modelMatrix * vec4(transformed, 1.0)).xyz; vSvN = normalize(mat3(modelMatrix) * objectNormal);');
+      sh.fragmentShader = 'uniform sampler2D osb;\nuniform vec3 osbStred;\nuniform vec2 osbPul;\nuniform vec2 osbPodlahy;\nvarying vec3 vSvP;\nvarying vec3 vSvN;\n' +
+        sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+          {
+            vec3 n = normalize(vSvN);
+            vec2 d = osbStred.xz - vSvP.xz;
+            bool uvnitr = all(lessThan(abs(d), osbPul));
+            bool podlaha = n.y > 0.7 && (abs(vSvP.y - osbPodlahy.x) < 0.35 || abs(vSvP.y - osbPodlahy.y) < 0.35);
+            bool strop = n.y < -0.7 && vSvP.y > osbPodlahy.x + 1.2;
+            bool stena = abs(n.y) < 0.3 && (dot(n.xz, d) > 0.0 || all(lessThan(abs(d), osbPul - 1.4)));
+            if (uvnitr && (podlaha || strop || stena)) {
+              vec2 u = abs(n.y) > 0.5 ? vSvP.xz : (abs(n.x) > abs(n.z) ? vSvP.zy : vSvP.xy);
+              diffuseColor.rgb = texture2D(osb, u / 1.22).rgb;
+            }
+          }`);
     };
-    mat.customProgramCacheKey = () => 'rez';
+    mat.customProgramCacheKey = () => (osb ? 'rez-osb' : 'rez');
   }
   const pomocny = new THREE.Box3();
   model.traverse((m) => {
@@ -185,10 +239,9 @@ async function start() {
     m.castShadow = m.receiveShadow = true;
     const mat = m.material, jm = mat.name.toLowerCase();
     pomocny.setFromObject(m);
-    if (jm === 'voda') {
-      m.castShadow = false;
-      vodaTex.wrapS = vodaTex.wrapT = THREE.RepeatWrapping; vodaTex.repeat.set(18, 6);
-      m.material = new THREE.MeshPhysicalMaterial({ color: 0x1d3a3f, roughness: 0.06, metalness: 0, normalMap: vodaTex, normalScale: new THREE.Vector2(0.35, 0.35), transparent: true, opacity: 0.88, clearcoat: 1, clearcoatRoughness: 0.05 });
+    if (jm === 'voda') {      // v modelu je jen koryto bez hladiny → hladina se doplní nahoře
+      m.visible = false;
+      vodniBox.union(pomocny);
       return;
     }
     if (jm === 'kamen') kameny.union(pomocny);
@@ -197,6 +250,19 @@ async function start() {
     if (chataBox.intersectsBox(pomocny)) rezovat(mat, !/strecha|sklo|okap/.test(jm));
     if (mat.normalMap) mat.normalScale.multiplyScalar(1);
   });
+
+  /* ================= potok: hladina ================= */
+  const vodaMat = new THREE.MeshPhysicalMaterial({ color: 0x24403f, roughness: 0.05, metalness: 0, normalMap: vodaTex, normalScale: new THREE.Vector2(0.4, 0.4), transparent: true, opacity: 0.9, clearcoat: 1, clearcoatRoughness: 0.04 });
+  if (!vodniBox.isEmpty()) {
+    vodaTex.wrapS = vodaTex.wrapT = THREE.RepeatWrapping;
+    const v = vodniBox.getSize(new THREE.Vector3()), s0 = vodniBox.getCenter(new THREE.Vector3());
+    vodaTex.repeat.set(v.x / 9, v.z / 9);
+    const hladina = new THREE.Mesh(new THREE.PlaneGeometry(v.x + OKRAJ * 2, v.z), vodaMat);
+    hladina.rotation.x = -Math.PI / 2;
+    hladina.position.set(s0.x, vodniBox.max.y - 0.35, s0.z);
+    hladina.receiveShadow = true;
+    scena.add(hladina);
+  }
 
   /* ================= ohniště (světlo v noci) ================= */
   if (!kameny.isEmpty()) {
@@ -373,7 +439,9 @@ async function start() {
     return C(pole[0][1]);
   };
   // násobiče barvy textury trávy během roku
-  const LOUKA = [[0, 0xb8a98a], [70, 0xb5ae86], [110, 0xf4ffe6], [170, 0xffffff], [225, 0xf2ecc4], [285, 0xd9c79a], [330, 0xbfae8e], [367, 0xb8a98a]];
+  const LOUKA = [[0, 0xc9bca6], [70, 0xd6cdb4], [110, 0xffffff], [225, 0xffffff], [285, 0xf0e6d0], [330, 0xd2c6ae], [367, 0xc9bca6]];
+  const ZELEN = [[0, 0.12], [75, 0.3], [105, 0.85], [140, 1], [175, 0.8], [200, 0.45], [230, 0.25], [260, 0.4], [290, 0.55], [320, 0.35], [367, 0.12]];
+  const klic = (pole, den) => { for (let i = 0; i < pole.length - 1; i++) { const [d1, v1] = pole[i], [d2, v2] = pole[i + 1]; if (den >= d1 && den <= d2) return v1 + (v2 - v1) * (den - d1) / (d2 - d1); } return pole[0][1]; };
   const LES = [[0, 0x6f6553], [110, 0x6f7a4f], [180, 0x66734a], [290, 0x7a6a48], [367, 0x6f6553]];
   const LISTI = [[0, 0x9a8a66], [95, 0x9a8a66], [120, 0xa7d064], [160, 0x6e9a3b], [250, 0x7a9638], [280, 0xe0962e], [305, 0xc0622a], [330, 0x9a8a66], [367, 0x9a8a66]];
   const NOC = C(0x0b1222), SOUMRAK = C(0xe7a57a), DEN = C(0xc9d8e6), SNIH = C(0xf2f5f9);
@@ -409,16 +477,18 @@ async function start() {
 
     // terén: textura × barva období × šum, les tmavší, sníh
     const louka = KLICE(LOUKA, dvr), les = KLICE(LES, dvr), bar = tg.attributes.color;
+    zelen.value = klic(ZELEN, dvr);
     for (let i = 0; i < tp.count; i++) {
       const s = sumy[i], z = zony[i];
-      c.copy(louka).multiplyScalar(0.86 + s * 0.3).lerp(C(0xd8c890).multiply(louka), Math.max(0, s - 0.35) * 0.9).lerp(les, z);
+      c.copy(louka).multiplyScalar(0.92 + s * 0.14).lerp(les, z);
       if (sn) c.lerp(SNIH, (0.93 + s * 0.05) * (1 - z * 0.15));
       bar.setXYZ(i, c.r, c.g, c.b);
     }
     bar.needsUpdate = true;
     terenMat.map = sn ? null : travaTex; terenMat.needsUpdate = true;
 
-    for (let i = 0; i < TRAVA; i++) trava.setColorAt(i, c.set(0x6f8f3a).multiply(louka).multiplyScalar(0.85 + travaOdstin[i]));
+    const stebla = C(0xa59a6a).lerp(C(0x6f9a3a), zelen.value);
+    for (let i = 0; i < TRAVA; i++) trava.setColorAt(i, c.copy(stebla).multiply(louka).multiplyScalar(0.85 + travaOdstin[i]));
     trava.instanceColor.needsUpdate = true;
     trava.visible = !sn;
     jehliciMat.color.set(0x2c4a2e).lerp(SNIH, sn * 0.35);
@@ -458,7 +528,7 @@ async function start() {
   const sx = (CH.max[0] - CH.min[0]), sz = (CH.max[2] - CH.min[2]);
   const ohenStred = ohniste ? ohniste.position : stred;
   const POHLEDY = {
-    dron:     { cil: [(stred.x + ohenStred.x) / 2, CH.podlaha - 1, (stred.z + ohenStred.z) / 2], phi: 0.62, theta: 0.2, sirka: 78 },
+    dron:     { cil: [(stred.x + ohenStred.x) / 2, CH.podlaha - 2, (stred.z + ohenStred.z) / 2 + 12], phi: 0.6, theta: 0.2, sirka: 92 },   // chata, ohniště i potok
     podkrovi: { cil: [stred.x, P2, stred.z], phi: 0.6, theta: 0.55, sirka: Math.max(sx, sz) * 1.45, rez: P2 + CFG.REZ },
     prizemi:  { cil: [stred.x, CH.podlaha, stred.z], phi: 0.6, theta: 0.55, sirka: Math.max(sx, sz) * 1.45, rez: CH.podlaha + CFG.REZ },
   };
