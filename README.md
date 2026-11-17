@@ -37,15 +37,30 @@ na jakékoli šířce. Pod 1100 px tablet, pod 700 px mobil – vlastní rozvrž
 
 ## 3D model chaty
 
-Scéna (`assets/js/scena3d.js`) ukazuje mýtinu z dronu. Slunce se počítá podle skutečného času a polohy (`GPS` v config.js). Roční období mění barvu trávy a listí. Sníh se bere ze skutečného počasí (open-meteo.com); když počasí není dostupné, padá od poloviny prosince do konce února. V noci svítí okna a v létě ohniště.
+Scéna (`assets/js/scena3d.js`) zobrazuje skutečný pozemek z Blenderu: terén, chatu, ohniště a potok.
+- **Slunce a obloha** se počítají podle skutečného času a polohy (`GPS` v config.js). Plech, sklo a voda odrážejí oblohu.
+- **Roční období:** mění se barva trávy a listí. Sníh se bere ze skutečného počasí (open-meteo.com). Když počasí není dostupné, padá od poloviny prosince do konce února.
+- **Noc:** svítí okna a ohniště (to jen v létě).
+- **Pohledy:** Z dronu, Podkroví a Přízemí. Patra se odříznou vodorovným řezem a stěny v řezu jsou černé.
 
-### Vlastní model
-1. Exportuj **glTF binární (.glb)**, Y nahoru, v metrech (cm/mm se poznají samy).
-2. Počátek dej doprostřed chaty na úroveň terénu (scéna ho stejně vycentruje).
-3. Materiály pojmenuj: `strecha…` (zasněží se a v řezu se skryje), `okno…`/`sklo…` (v noci svítí).
-4. Ulož jako `assets/3d/chata.glb` a v config.js nastav `SCENA.MODEL_URL: 'assets/3d/chata.glb'`.
-5. Nastav `VYSKA_PODKROVI` (výška podlahy podkroví nad terénem, m) a případně `MODEL_OTOCENI`.
+### Nová verze modelu z Blenderu
+1. Export: **glTF Binary (.glb)**, „+Y Up“ zapnuto, „Apply Modifiers“ zapnuto.
+2. Spusť převod:
+   ```
+   cd nastroje
+   npm install            # jen poprvé
+   node priprav-model.mjs ~/Downloads/chata_POZEMEK.glb ../assets/3d
+   ```
+3. Skript vytvoří `assets/3d/chata.glb` (zhruba 2 MB), `pozemek.json` a `trava.webp`.
 
-Pohledy Podkroví a Přízemí model nijak nerozdělují. Odříznou ho vodorovnou rovinou ve výšce podlahy + 1,25 m a stěny v řezu se vybarví černě jako v půdorysu.
+Co skript dělá:
+- Terén (materiál „Material“) převede na výškovou mapu.
+- Koule stromů („Material.002“) nahradí stromy, které vykreslí web.
+- Když je chata v souboru dvakrát, nechá tu, která stojí na terénu.
+- Normálové mapy převede z DirectX na OpenGL a nastaví jim sílu 1.
+- Dřevo přebarví na smrk v medové lazuře, střechu na antracitový plech a sklo udělá průhledné (podle fotek chaty).
+- Textury zmenší na 1024 / 512 px ve WebP a geometrii zkomprimuje meshoptem.
+
+Výšku podlahy podkroví nastavíš v config.js (`PODKROVI_NAD_PODLAHOU`).
 
 Náhled jiného času: `index.html?cas=2027-01-15T21:30&snih=1`
