@@ -35,13 +35,17 @@ Kvůli 3D (ES moduly) otevírej přes lokální server, ne dvojklikem: `npx serv
 Na počítači je vše v jednotkách `--u` = 1 px návrhu (frame 1920 px), takže rozestupy odpovídají Figmě
 na jakékoli šířce. Pod 1100 px tablet, pod 700 px mobil – vlastní rozvržení.
 
-## 3D model chaty
+## 3D model chaty – maketa
 
-Scéna (`assets/js/scena3d.js`) zobrazuje skutečný pozemek z Blenderu: terén, chatu, ohniště a potok.
-- **Slunce a obloha** se počítají podle skutečného času a polohy (`GPS` v config.js). Plech, sklo a voda odrážejí oblohu.
-- **Roční období:** mění se barva trávy a listí. Sníh se bere ze skutečného počasí (open-meteo.com). Když počasí není dostupné, padá od poloviny prosince do konce února.
-- **Noc:** svítí okna a ohniště (to jen v létě).
-- **Pohledy:** Z dronu, Podkroví a Přízemí. Patra se odříznou vodorovným řezem a stěny v řezu jsou černé.
+Scéna (`assets/js/scena3d.js`) zobrazuje pozemek jako architektonickou maketu na tmavém podkladu.
+- **Terén** jsou vrstvy kartonu podle vrstevnic s tenkou tmavou hranou. Tloušťku vrstvy určuje `VRSTVA` v config.js (1 m).
+- **Chata** má světlé dřevo (balza) a bílou střechu. Interiér je tmavě hnědá OSB, okna svítí.
+- **Stromy** jsou pěnové koruny na místech koulí z modelu. **Potok** je matné modré plexisklo.
+- **Slunce** se počítá podle skutečného času, takže stíny se během dne otáčejí. V noci svítí okna a ohniště.
+- **V zimě** (podle skutečného počasí) jsou vrstvy i koruny bílé.
+- **Pohledy:** Z dronu, Podkroví a Přízemí. Patra se odříznou vodorovným řezem a řez je černý.
+
+Barvy makety najdeš na začátku `scena3d.js` (objekt `BARVY`).
 
 ### Nová verze modelu z Blenderu
 1. Export: **glTF Binary (.glb)**, „+Y Up“ zapnuto, „Apply Modifiers“ zapnuto.
@@ -51,25 +55,9 @@ Scéna (`assets/js/scena3d.js`) zobrazuje skutečný pozemek z Blenderu: terén,
    npm install            # jen poprvé
    node priprav-model.mjs ~/Downloads/chata_POZEMEK.glb ../assets/3d
    ```
-3. Skript vytvoří `assets/3d/chata.glb` (zhruba 2 MB) a `pozemek.json`.
+3. Skript vytvoří `assets/3d/chata.glb` a `pozemek.json`.
 
-### Textura louky z fotek
-Louka je složená ze dvou skutečných textur: `louka-leto.webp` (suchá letní tráva) a `louka-jaro.webp` (zelená jarní). Scéna je míchá ve skvrnách podle ročního období. Novou texturu uděláš z fotky:
-```
-python3 nastroje/textura-louky.py fotka.jpg x0 y0 x1 y1 natazeni assets/3d/louka-leto.webp
-```
-- `x0 y0 x1 y1` je výřez trávy bez lidí a předmětů.
-- `natazeni` je srovnání perspektivy, obvykle 2–3.
-
-Interiér (podlahy, stěny a stropy uvnitř chaty) je tmavě hnědá natřená OSB a kreslí ji přímo scéna. Hladinu potoka doplní scéna nad korytem z modelu (materiál „voda“).
-
-Co skript dělá:
-- Terén (materiál „Material“) převede na výškovou mapu.
-- Koule stromů („Material.002“) nahradí stromy, které vykreslí web.
-- Když je chata v souboru dvakrát, nechá tu, která stojí na terénu.
-- Normálové mapy převede z DirectX na OpenGL a nastaví jim sílu 1.
-- Dřevo přebarví na smrk v medové lazuře, střechu na antracitový plech a sklo udělá průhledné (podle fotek chaty).
-- Textury zmenší na 1024 / 512 px ve WebP a geometrii zkomprimuje meshoptem.
+Skript převede terén na výškovou mapu a koule stromů na seznam stromů. Když je chata v souboru dvakrát, nechá tu, která stojí na terénu. Nakonec model zkomprimuje.
 
 Výšku podlahy podkroví nastavíš v config.js (`PODKROVI_NAD_PODLAHOU`).
 

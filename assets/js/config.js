@@ -11,7 +11,8 @@ window.CHATA = {
   // Fotky v galerii – v tomhle pořadí. Nahraď vlastními (ideálně 2000 px na šířku).
   // 3D scéna chaty (model připraví nastroje/priprav-model.mjs)
   SCENA: {
-    SLOZKA: 'assets/3d/',          // chata.glb, pozemek.json, trava.webp, voda-normal.webp
+    SLOZKA: 'assets/3d/',          // chata.glb + pozemek.json
+    VRSTVA: 1.0,                   // tloušťka vrstvy terénu makety (m)
     PODKROVI_NAD_PODLAHOU: 2.45,   // výška podlahy podkroví nad podlahou přízemí (m) – řez „Podkroví“
     SEVER: 0,                      // otočení světových stran vůči modelu (stupně)
     GPS: [49.876, 13.897],         // poloha chaty – slunce a počasí
