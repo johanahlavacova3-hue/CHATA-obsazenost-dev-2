@@ -26,9 +26,14 @@
   --obs-bg: #e2b1b1;    --obs-fg: #a72720;
   --mimo-bg: #e8e8e8;   --mimo-fg: #a1a1a1;
 
-  /* Gamay: nadpisy a titulky Condensed (šířka 75), text Regular (400) */
-  --pismo: 'gamay-variable', 'gamay', 'Archivo', Arial, Helvetica, sans-serif;
-  --pismo-logo: 'Lobster', 'Brush Script MT', cursive;
+  /* Adobe Fonts kit msh8cqt: gamay (400/700) na text, gamay-condensed (700) na nadpisy a titulky,
+     cheesecake (900) na logo a odpočet. Náhradní Archivo (šířku řídí --d) a Lobster. */
+  --pismo: 'gamay', 'Archivo', Arial, Helvetica, sans-serif;
+  --pismo-cond: 'gamay-condensed', 'Archivo', Arial, Helvetica, sans-serif;
+  /* Cheesecake (Mark Simonson, Adobe Fonts): logo „Poutníci“ a velké číslo odpočtu; náhradní Lobster */
+  --pismo-logo: 'cheesecake', 'Lobster', 'Brush Script MT', cursive;
+  --zelena: #4c7720;
+  --zelena-svetla: #d3eab5;
   --cond: 75;
   --vyska-hlavicky: 58px;
 }
@@ -61,10 +66,10 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 }
 
 .nadpis {
-  font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed;
+  font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond);
   font-size: 56px; line-height: 1; text-transform: uppercase; color: var(--text);
 }
-.titulek { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-size: 26px; line-height: 1.1; }
+.titulek { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 26px; line-height: 1.1; }
 .maly-text { font-size: 16px; line-height: 1.25; }
 
 /* 3. Hlavička ------------------------------------------- */
@@ -153,7 +158,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 
 /* ceník */
 .trava { background: url('../img/trava.svg') repeat-x 0 0 / 150px 70px; height: 70px; }
-.cenik__cena, .cenik__pozn { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-size: 52px; line-height: 1; }
+.cenik__cena, .cenik__pozn { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 52px; line-height: 1; }
 .cenik__cena { color: var(--modra); }
 .cenik__pozn { color: var(--placeholder); }
 
@@ -168,7 +173,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 
 /* kalendář */
 .kalendar { position: relative; background: #fff; border-radius: 18px; padding: 16px 8px 14px; }
-.kalendar__mesic { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-size: 17px; text-transform: uppercase; padding: 6px 8px 0; }
+.kalendar__mesic { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 17px; text-transform: uppercase; padding: 6px 8px 0; }
 .kalendar__nav { position: absolute; right: 8px; top: 8px; display: flex; align-items: center; gap: 2px; }
 .kalendar__sipka, .kalendar__dnes { border: 0; background: transparent; cursor: pointer; border-radius: 8px; }
 .kalendar__sipka { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; }
@@ -186,8 +191,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
   height: 44px; border-radius: 3px; background: var(--mimo-bg); color: var(--mimo-fg);
 }
-.den__cislo { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-size: 14px; line-height: 1; }
-.den__stav { display: none; font-weight: 800; --w: 800; --d: var(--cond); font-stretch: condensed; font-size: 11px; line-height: 1; }
+.den__cislo { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 14px; line-height: 1; }
+.den__stav { display: none; font-weight: 800; --w: 800; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 11px; line-height: 1; }
 .den--volno { background: var(--volno-bg); color: var(--text); }
 .den--volno .den__stav { color: var(--volno-fg); }
 .den--obsazeno { background: var(--obs-bg); color: var(--text); }
@@ -251,17 +256,21 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
     display: block; font-size: calc(14 * var(--u)); border-radius: calc(10 * var(--u));
     text-box: trim-both cap alphabetic;
   }
-  /* levá hrana textu z návrhu minus odsazení 22 */
-  .menu__o-nas     { left: calc((1327 - 22) * var(--u)); }
-  .menu__akce      { left: calc((1412 - 22) * var(--u)); }
-  .menu__oddil     { left: calc((1499 - 22) * var(--u)); }
+  /* levá hrana textu z návrhu minus odsazení 22
+     (Minitábor vložen mezi Oddíl a Plechovky – položky vlevo se posunuly, mezery jako ve Figmě) */
+  .menu__o-nas     { left: calc((1193 - 22) * var(--u)); }
+  .menu__akce      { left: calc((1278 - 22) * var(--u)); }
+  .menu__oddil     { left: calc((1366 - 22) * var(--u)); }
+  .menu__minitabor { left: calc((1461 - 22) * var(--u)); }
   .menu__plechovky { left: calc((1593 - 22) * var(--u)); }
   .menu__chata     { left: calc((1739 - 22) * var(--u)); }
-  /* aktivní položka: malá modrá pilulka 89 × 21 od y 18 (verzálky dál od y 24) */
+  /* aktivní položka: malá modrá pilulka výšky 21 od y 18 (verzálky dál od y 24) */
   .menu a[aria-current="page"] {
-    left: calc(1718 * var(--u)); top: calc(18 * var(--u)); width: calc(89 * var(--u)); height: calc(21 * var(--u));
+    top: calc(18 * var(--u)); height: calc(21 * var(--u));
     padding: calc(6 * var(--u)) 0 0; text-align: center; border-radius: calc(11 * var(--u));
   }
+  .menu__chata[aria-current="page"]     { left: calc(1718 * var(--u)); width: calc(89 * var(--u)); }
+  .menu__minitabor[aria-current="page"] { left: calc(1453 * var(--u)); width: calc(97 * var(--u)); }
   .menu__fotky     { left: calc((1849 - 22) * var(--u)); }
 
   /* list = plátno 1920 × 1022 (1080 − hlavička) */
@@ -405,3 +414,116 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   .list--cenik .cenik__chata { z-index: 1; }
 }
 .plany { pointer-events: none; }   /* jen obrázek – nesmí krást kurzor položkám vybavení */
+
+
+/* =========================================================
+   8. MINITÁBOR (minitabor.html)
+   ========================================================= */
+/* hlavička nad zeleným odpočtem */
+.hlavicka { transition: background-color .3s ease; }
+.hlavicka--zelena { background: var(--zelena); }
+.hlavicka--zelena .logo { color: #fff; }
+.hlavicka--zelena .menu a:not([aria-current]) { color: #fff; }
+.hlavicka--zelena .menu a:not([aria-current]):hover { background: rgba(255, 255, 255, .14); }
+.hlavicka--zelena .menu-tl__car, .hlavicka--zelena .menu-tl__car::before, .hlavicka--zelena .menu-tl__car::after { background: #fff; }
+@media (max-width: 1099px) { .hlavicka--zelena .menu a:not([aria-current]) { color: inherit; } }   /* rozbalené menu je bílé */
+
+.jen-pc { display: none; }
+@media (min-width: 1100px) { .jen-pc { display: inline; } }
+
+/* 1. odpočet – mobil/tablet */
+.list--odpocet { background: var(--zelena); color: var(--zelena-svetla); text-align: center; padding: 56px 16px 64px; gap: 10px; overflow: hidden; }
+.odpocet__uz { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); text-transform: uppercase; font-size: 60px; line-height: 1; text-box: trim-both cap alphabetic; }
+.odpocet__cislo { font-family: var(--pismo-logo); font-size-adjust: none; color: #f7f7f7; line-height: 1; white-space: nowrap; rotate: -7deg; padding: .12em 0 .2em; }
+.odpocet__vnitrek { display: inline-block; }
+.odpocet__do { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 46px; line-height: 1; text-box: trim-both cap alphabetic; }
+
+/* 2. o minitáboře – mobil/tablet */
+.info { list-style: none; display: grid; gap: 22px; }
+.info__polozka { display: grid; grid-template-columns: 76px 1fr; gap: 14px; align-items: start; }
+.info__polozka .ikona { max-width: 64px; max-height: 70px; margin-top: 2px; }
+.info__polozka .titulek { margin-bottom: 10px; }
+.info__odkaz { color: var(--modra); text-decoration: none; }
+.info__odkaz:hover { text-decoration: underline; }
+.info__pozn { font-size: 13px; line-height: 1.25; margin-top: 10px; text-box: trim-both cap alphabetic; }
+.list--omin .foto { aspect-ratio: 942 / 802; }
+
+/* 4. přihláška – mobil/tablet */
+.kontakt__role { font-size: 16px; line-height: 1.25; margin-bottom: 6px; text-box: trim-both cap alphabetic; }
+.qr { width: min(100%, 300px); aspect-ratio: 1; background: #111; }
+.qr--hotovo { background: transparent; }
+.qr svg { display: block; width: 100%; height: 100%; }
+.prihlaska__tl {
+  display: block; padding: 12px 16px; border-radius: 999px; background: var(--modra); color: #fff; text-align: center; text-decoration: none;
+  font-weight: 800; --w: 800; font-size: 14px; text-transform: uppercase; text-box: trim-both cap alphabetic;
+}
+.prihlaska__tl:hover { background: #0f2fd6; }
+
+@media (min-width: 700px) {
+  .odpocet__uz { font-size: 96px; } .odpocet__do { font-size: 84px; }
+  .list--omin { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; align-items: start; }
+  .list--omin .nadpis, .list--omin .odstavec { grid-column: 1 / -1; }
+  .list--omin .foto { grid-column: 2; grid-row: 3; }
+  .list--prihlaska { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+  .list--prihlaska .nadpis, .list--prihlaska .odstavec { grid-column: 1 / -1; }
+  .list--prihlaska .kontakty { grid-row: 3 / span 3; }
+}
+
+/* ---------- POČÍTAČ – plátno 1:1 (souřadnice = px návrhu, y od spodku hlavičky) ---------- */
+@media (min-width: 1100px) {
+  .menu a { transition: color .3s ease; }
+
+  /* 1. odpočet */
+  .list--odpocet { padding: 0; text-align: left; }
+  .odpocet__uz { left: 0; right: 0; top: calc(69 * var(--u)); text-align: center; font-size: calc(162.5 * var(--u)); }
+  .odpocet__cislo { left: calc(906 * var(--u)); top: calc(441 * var(--u)); translate: -50% -50%; padding: 0; }   /* šířku dopočítá minitabor.js */
+  .odpocet__do { left: 0; right: 0; top: calc(775 * var(--u)); text-align: center; font-size: calc(175 * var(--u)); }
+
+  /* 2. o minitáboře: foto stejně jako O Rábu, položky jako vybavení */
+  .list--omin { display: block; }
+  .list--omin .foto { left: calc(969 * var(--u)); top: calc(171 * var(--u)); width: calc(942 * var(--u)); height: calc(802 * var(--u)); aspect-ratio: auto; border-radius: calc(28 * var(--u)); }
+  .info { position: absolute; inset: 0; display: block; }
+  .info__polozka { position: absolute; display: block; left: calc(181 * var(--u)); width: calc(325 * var(--u)); }
+  .info__polozka .titulek { margin: 0 0 calc(19 * var(--u)); }
+  .info__polozka--misto  { top: calc(381 * var(--u)); }
+  .info__polozka--vek    { top: calc(522 * var(--u)); }
+  .info__polozka--termin { top: calc(662 * var(--u)); }
+  .info__polozka--cena   { top: calc(803 * var(--u)); }
+  .info__polozka .ikona { position: absolute; max-width: none; max-height: none; height: auto; margin: 0; }
+  .info__polozka--misto .ikona  { left: calc(-101 * var(--u)); top: calc(3 * var(--u));  width: calc(52 * var(--u)); }
+  .info__polozka--vek .ikona    { left: calc(-106 * var(--u)); top: calc(34 * var(--u)); width: calc(68 * var(--u)); }
+  .info__polozka--termin .ikona { left: calc(-126 * var(--u)); top: calc(-1 * var(--u)); width: calc(89 * var(--u)); }
+  .info__polozka--cena .ikona   { left: calc(-137 * var(--u)); top: calc(8 * var(--u));  width: calc(112 * var(--u)); }
+  .info__pozn { margin-top: calc(20 * var(--u)); font-size: calc(14 * var(--u)); line-height: calc(17 * var(--u)); }
+
+  /* 3. fotky – náhledy 194 × 111, mezera 16 */
+  .list--mtgalerie .galerie { top: calc(21 * var(--u)); height: calc(832 * var(--u)); }
+  .list--mtgalerie .nahledy { top: calc(862 * var(--u)); gap: calc(16 * var(--u)); }
+  .list--mtgalerie .nahled { width: calc(194 * var(--u)); height: calc(111 * var(--u)); aspect-ratio: auto; }
+
+  /* 4. přihláška */
+  .list--prihlaska { display: block; }
+  .list--prihlaska .kontakty { grid-row: auto; }
+  .list--prihlaska .kontakt { left: calc(40 * var(--u)); }
+  .list--prihlaska .kontakt:first-child { top: calc(702 * var(--u)); }
+  .list--prihlaska .kontakt:last-child { top: calc(852 * var(--u)); }
+  .list--prihlaska .kontakt__text { left: calc(141 * var(--u)); }
+  /* řádky 25 px od sebe: verzálky 13 px + mezera 12 px (text je oříznutý na verzálky) */
+  .kontakt__role, .list--prihlaska .kontakt__text a { font-size: calc(18 * var(--u)); line-height: calc(25 * var(--u)); margin: 0 0 calc(12 * var(--u)); }
+  .qr { left: calc(1201 * var(--u)); top: calc(202 * var(--u)); width: calc(470 * var(--u)); height: calc(470 * var(--u)); }
+  .prihlaska__text { left: calc(1202 * var(--u)); top: calc(721 * var(--u)); width: calc(470 * var(--u)); line-height: calc(39.5 * var(--u)); }
+  .prihlaska__tl {
+    left: calc(1200 * var(--u)); top: calc(889 * var(--u)); width: calc(460 * var(--u)); height: calc(21 * var(--u));
+    padding: calc(6.5 * var(--u)) 0 0; font-size: calc(12.5 * var(--u));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* tlačítko přihlášky: jemný „dech“, ať je vidět */
+  .prihlaska__tl { transition: translate .2s ease, background-color .2s ease; }
+  .prihlaska__tl:hover { translate: 0 -2px; }
+  .info__polozka .ikona { transition: rotate .3s cubic-bezier(.3, 1.8, .5, 1); }
+  .info__polozka:hover .ikona { rotate: -8deg; }
+  .odpocet__uz.odhal, .odpocet__do.odhal { translate: 0 24px; }
+  .odpocet__uz.odhal.je-videt, .odpocet__do.odhal.je-videt { translate: 0 0; }
+}

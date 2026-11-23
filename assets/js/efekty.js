@@ -23,7 +23,7 @@
 
   // jemné vysunutí obsahu při posunu stránky
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    var prvky = document.querySelectorAll('.list:not(.list--chata) .nadpis, .list .odstavec, .list .pilulka, .foto, .polozka, .plany, .cenik__chata, .cenik__cena, .cenik__pozn, .kontakt, .kalendar');
+    var prvky = document.querySelectorAll('.list:not(.list--chata) .nadpis, .list .odstavec, .list .pilulka, .foto, .polozka, .plany, .cenik__chata, .cenik__cena, .cenik__pozn, .kontakt, .kalendar, .info__polozka, .qr, .prihlaska__text, .prihlaska__tl, .odpocet__uz, .odpocet__do');
     var io = new IntersectionObserver(function (zaznamy) {
       zaznamy.forEach(function (z) { if (z.isIntersecting) { z.target.classList.add('je-videt'); io.unobserve(z.target); } });
     }, { threshold: 0.15 });

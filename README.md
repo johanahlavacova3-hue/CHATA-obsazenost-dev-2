@@ -64,3 +64,17 @@ Skript převede terén na výškovou mapu a koule stromů na seznam stromů. Kdy
 Výšku podlahy podkroví nastavíš v config.js (`PODKROVI_NAD_PODLAHOU`).
 
 Náhled jiného času: `index.html?cas=2027-01-15T21:30&snih=1`
+
+## Stránka MINITÁBOR (`minitabor.html`)
+
+Sekce: **odpočet** (zelený, hlavička nad ním zezelená) · **O minitáboře** (místo, věk, termín, cena) · **fotky** · **přihláška** (kontakty, QR kód, tlačítko).
+
+Nastavení je v `assets/js/config-minitabor.js`:
+- `ZACATEK` a `KONEC` určují tábor. Odpočet ukazuje dny do začátku (1 den / 2–4 dny / 5+ dní). Během tábora ukáže „Právě běží“, po něm „Minitábor byl super“. Termín v textu se doplní sám.
+- `PRIHLASKA_URL` je odkaz na přihlášku. Z něj se vytvoří QR kód (knihovna qrcode-generator z jsDelivr) a tlačítko. Prázdné = černý čtverec jako v návrhu.
+- `MAPY_URL` je odkaz „Odkaz na mapy zde“.
+- `GALERIE` jsou fotky. Teď jsou tu výřezy z návrhu, nahraď je originály (ideálně 2000 px na šířku).
+
+**Písmo Cheesecake** (Mark Simonson) je v Adobe Fonts, licence povoluje web i komerční použití. Přidej ho do stejného webového projektu jako Gamay. Použité je jen tam, kde je v návrhu: logo „Poutníci“ a velké číslo odpočtu. Dokud není kit vyplněný, zobrazuje se náhradní Lobster. Velké číslo se samo přizpůsobí šířce z návrhu, ať je načtené kterékoli písmo.
+
+**Menu:** Minitábor je mezi Oddílem a Plechovkami. Položky vlevo se posunuly, Plechovky, Chata a Fotky zůstaly na místě. Pozice jsou v `styles.css` u `.menu__…`.

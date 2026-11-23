@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minitábor – Poutníci</title>
+  <meta name="description" content="Minitábor turistického oddílu Poutníci – odpočet, informace o táboře, fotky a přihláška.">
+
+  <!-- ============ PÍSMA GAMAY + CHEESECAKE (Adobe Fonts) ============
+       1) fonts.adobe.com → Gamay → „Add to Web Project“ (zaškrtni i Variable)
+          + do STEJNÉHO projektu přidej Cheesecake (Mark Simonson) – logo „Poutníci“ a velké číslo odpočtu
+       2) ID projektu (např. abc1def) vlož níže do ADOBE_KIT (ve všech .html)
+       Dokud je prázdné, použije se náhradní Archivo a Lobster z Google Fonts. -->
+  <script>
+    (function () {
+      var ADOBE_KIT = 'msh8cqt';
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = ADOBE_KIT
+        ? 'https://use.typekit.net/' + ADOBE_KIT + '.css'
+        : 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Lobster&display=swap';
+      document.head.appendChild(l);
+      if (ADOBE_KIT) {
+        var lob = document.createElement('link');
+        lob.rel = 'stylesheet';
+        lob.href = 'https://fonts.googleapis.com/css2?family=Lobster&display=swap';
+        document.head.appendChild(lob);
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <!-- ============ HLAVIČKA ============ -->
+  <header class="hlavicka">
+    <a class="logo" href="index.html" aria-label="Poutníci – úvod">Poutníci</a>
+
+    <button class="menu-tl" type="button" aria-expanded="false" aria-controls="menu">
+      <span class="skryte">Menu</span><span class="menu-tl__car" aria-hidden="true"></span>
+    </button>
+
+    <nav class="menu" id="menu" aria-label="Hlavní menu">
+      <a class="menu__o-nas" href="404.html">O nás</a>
+      <a class="menu__akce" href="404.html">Akce</a>
+      <a class="menu__oddil" href="404.html">Oddíl</a>
+      <a class="menu__minitabor" href="minitabor.html" aria-current="page">Minitábor</a>
+      <a class="menu__plechovky" href="404.html">Plechovky</a>
+      <a class="menu__chata" href="index.html">Chata</a>
+      <a class="menu__fotky" href="404.html">Fotky</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ 1. ODPOČET ============ -->
+    <section class="list list--odpocet" id="odpocet" aria-label="Odpočet do Minitábora">
+      <p class="odpocet__uz" id="odpocetNad">Už jen</p>
+      <p class="odpocet__cislo" id="odpocetCislo"><span class="odpocet__vnitrek"><span id="odpocetDni">352</span>&nbsp;<span id="odpocetSlovo">dní</span></span></p>
+      <p class="odpocet__do" id="odpocetPod">do Minitábora</p>
+    </section>
+
+    <!-- ============ 2. O MINITÁBOŘE ============ -->
+    <section class="list list--omin" id="o-minitabore">
+      <h1 class="nadpis">O minitáboře</h1>
+      <p class="odstavec">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
+      <ul class="info">
+        <li class="info__polozka info__polozka--misto"><img class="ikona" src="assets/img/ikony/misto.svg" alt=""><div>
+          <h3 class="titulek">Místo</h3>
+          <p class="maly-text">Rabštejn nad Střelou, u Nučické lípy<br><a class="info__odkaz" id="odkazMapy" href="https://mapy.cz/zakladni?source=coor&amp;id=13.2833231%2C50.0531928&amp;x=13.2833231&amp;y=50.0531928&amp;z=16" target="_blank" rel="noopener">Odkaz na mapy zde –v</a></p>
+        </div></li>
+        <li class="info__polozka info__polozka--vek"><img class="ikona" src="assets/img/ikony/vek.svg" alt=""><div>
+          <h3 class="titulek">Věk</h3>
+          <p class="maly-text">Tábor je určený pro děti od 6 let do 15 let převážně chodící na turistický oddíl.</p>
+        </div></li>
+        <li class="info__polozka info__polozka--termin"><img class="ikona" src="assets/img/ikony/termin.svg" alt=""><div>
+          <h3 class="titulek">Termín</h3>
+          <p class="maly-text" id="terminText">31. července – 8. srpna 2027</p>
+        </div></li>
+        <li class="info__polozka info__polozka--cena"><img class="ikona" src="assets/img/ikony/cena.svg" alt=""><div>
+          <h3 class="titulek">Cena</h3>
+          <p class="maly-text">3&nbsp;000&nbsp;Kč<br>Platí se do 1.&nbsp;června 2027</p>
+          <p class="info__pozn">V případě jakýchkoliv potíží s termínem nás kontaktujte, něco vymyslíme.</p>
+        </div></li>
+      </ul>
+      <figure class="foto">
+        <img src="assets/img/minitabor/o-minitabore.jpg" alt="Společná fotka dětí a vedoucích z Minitábora před chatou" loading="lazy" width="1230" height="1047">
+      </figure>
+    </section>
+
+    <!-- ============ 3. FOTKY ============ -->
+    <section class="list list--galerie list--mtgalerie" id="fotky" aria-label="Fotky z Minitábora">
+      <div class="galerie" tabindex="0" aria-roledescription="galerie">
+        <div class="galerie__okno" id="galerieOkno"></div>
+        <button class="galerie__sipka galerie__sipka--vlevo" type="button" id="galeriePred" aria-label="Předchozí fotka">
+          <svg viewBox="0 0 20 32" aria-hidden="true"><path d="M16 3L4 16l12 13"/></svg>
+        </button>
+        <button class="galerie__sipka galerie__sipka--vpravo" type="button" id="galerieDal" aria-label="Další fotka">
+          <svg viewBox="0 0 20 32" aria-hidden="true"><path d="M4 3l12 13L4 29"/></svg>
+        </button>
+        <p class="skryte" aria-live="polite">Fotka <span id="galerieCislo">1</span> z <span id="galerieCelkem">1</span></p>
+      </div>
+      <div class="nahledy" id="galerieNahledy" role="tablist" aria-label="Výběr fotky"></div>
+    </section>
+
+    <!-- ============ 4. PŘIHLÁŠKA ============ -->
+    <section class="list list--prihlaska" id="prihlaska">
+      <h2 class="nadpis">Chci na minitábor</h2>
+      <p class="odstavec">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
+      <div class="kontakty">
+        <div class="kontakt">
+          <span class="kontakt__foto" aria-hidden="true"></span>
+          <div class="kontakt__text">
+            <h3 class="titulek">Tomáš Černý</h3>
+            <p class="kontakt__role">Hlavní vedoucí</p>
+            <a href="tel:+420333444555">+ 420 333 444 555</a>
+            <a href="mailto:turistika@zebrak.cz">turistika@zebrak.cz</a>
+          </div>
+        </div>
+        <div class="kontakt">
+          <span class="kontakt__foto" aria-hidden="true"></span>
+          <div class="kontakt__text">
+            <h3 class="titulek">Tomáš Černý</h3>
+            <p class="kontakt__role">Hlavní vedoucí</p>
+            <a href="tel:+420333444555">+ 420 333 444 555</a>
+            <a href="mailto:turistika@zebrak.cz">turistika@zebrak.cz</a>
+          </div>
+        </div>
+      </div>
+      <div class="qr" id="qr" role="img" aria-label="QR kód s odkazem na přihlášku"></div>
+      <p class="prihlaska__text titulek">Nezávazně se přihlaste už za<br class="jen-pc"> 3&nbsp;min! Pomocí QR, nebo<br class="jen-pc"> odkazem níže</p>
+      <a class="prihlaska__tl" id="prihlaskaOdkaz" href="https://forms.gle/EDHBgMK3LBi7hWQQ7" target="_blank" rel="noopener">Nezávazně se přihlásit</a>
+    </section>
+  </main>
+
+  <script src="assets/js/config-minitabor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js" defer></script>
+  <script src="assets/js/efekty.js"></script>
+  <script src="assets/js/galerie.js"></script>
+  <script src="assets/js/minitabor.js" defer></script>
+</body>
+</html>
