@@ -4,31 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stránka se připravuje – Poutníci</title>
-  <!-- ============ PÍSMA GAMAY + CHEESECAKE (Adobe Fonts) ============
-       1) fonts.adobe.com → Gamay → „Add to Web Project“ (zaškrtni i Variable)
-          + do STEJNÉHO projektu přidej Cheesecake (Mark Simonson) – logo „Poutníci“ a velké číslo odpočtu
-       2) ID projektu (např. abc1def) vlož níže do ADOBE_KIT (ve všech .html)
-       Dokud je prázdné, použije se náhradní Archivo a Lobster z Google Fonts. -->
-  <script>
-    (function () {
-      var ADOBE_KIT = 'msh8cqt';
-      var l = document.createElement('link');
-      l.rel = 'stylesheet';
-      l.href = ADOBE_KIT
-        ? 'https://use.typekit.net/' + ADOBE_KIT + '.css'
-        : 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Lobster&display=swap';
-      document.head.appendChild(l);
-      if (ADOBE_KIT) {
-        var lob = document.createElement('link');
-        lob.rel = 'stylesheet';
-        lob.href = 'https://fonts.googleapis.com/css2?family=Lobster&display=swap';
-        document.head.appendChild(lob);
-      }
-      document.documentElement.classList.add('js');
-    })();
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Písma z Adobe Fonts (projekt msh8cqt): gamay, gamay-condensed, cheesecake.
+       V nastavení projektu na fonts.adobe.com musí být Character set „All Characters“ (kvůli ř, ě, č, š, ž). -->
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/msh8cqt.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>

@@ -26,12 +26,12 @@
   --obs-bg: #e2b1b1;    --obs-fg: #a72720;
   --mimo-bg: #e8e8e8;   --mimo-fg: #a1a1a1;
 
-  /* Adobe Fonts kit msh8cqt: gamay (400/700) na text, gamay-condensed (700) na nadpisy a titulky,
-     cheesecake (900) na logo a odpočet. Náhradní Archivo (šířku řídí --d) a Lobster. */
-  --pismo: 'gamay', 'Archivo', Arial, Helvetica, sans-serif;
-  --pismo-cond: 'gamay-condensed', 'Archivo', Arial, Helvetica, sans-serif;
-  /* Cheesecake (Mark Simonson, Adobe Fonts): logo „Poutníci“ a velké číslo odpočtu; náhradní Lobster */
-  --pismo-logo: 'cheesecake', 'Lobster', 'Brush Script MT', cursive;
+  /* Adobe Fonts kit msh8cqt: gamay (400/700) na text a menu, gamay-condensed (700) na nadpisy a titulky,
+     cheesecake (900) na logo a odpočet. */
+  --pismo: 'gamay', sans-serif;
+  --pismo-cond: 'gamay-condensed', sans-serif;
+  /* Cheesecake (Mark Simonson, Adobe Fonts): logo „Poutníci“ a velké číslo odpočtu */
+  --pismo-logo: 'cheesecake', cursive;
   --zelena: #4c7720;
   --zelena-svetla: #d3eab5;
   --cond: 75;
@@ -66,10 +66,10 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 }
 
 .nadpis {
-  font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond);
+  font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond);
   font-size: 56px; line-height: 1; text-transform: uppercase; color: var(--text);
 }
-.titulek { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 26px; line-height: 1.1; }
+.titulek { font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 26px; line-height: 1.1; }
 .maly-text { font-size: 16px; line-height: 1.25; }
 
 /* 3. Hlavička ------------------------------------------- */
@@ -78,9 +78,9 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   background: var(--pozadi); display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
 }
 .hlavicka--stin { box-shadow: 0 1px 0 rgba(0, 0, 0, .06); }
-.logo { font-family: var(--pismo-logo); font-size-adjust: none; font-size: 30px; line-height: 1; color: var(--oranz); text-decoration: none; }
+.logo { font-weight: 900; font-family: var(--pismo-logo); font-size-adjust: none; font-size: 30px; line-height: 1; color: var(--oranz); text-decoration: none; }
 .menu a {
-  font-weight: 800; --w: 800; --d: 100; font-size: 15px; letter-spacing: .01em; text-transform: uppercase;
+  font-weight: 700; --w: 700; --d: 100; font-size: 15px; letter-spacing: .01em; text-transform: uppercase;
   text-decoration: none; white-space: nowrap; border-radius: 10px;
 }
 .menu a:hover { background: rgba(217, 223, 237, .6); }
@@ -105,7 +105,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 .pilulka {
   display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 28px;
   border-radius: 10px; background: var(--modra-svetla); color: var(--text);
-  font-weight: 800; --w: 800; --d: 100; font-size: 15px; text-transform: uppercase; letter-spacing: .01em; text-decoration: none;
+  font-weight: 700; --w: 700; --d: 100; font-size: 15px; text-transform: uppercase; letter-spacing: .01em; text-decoration: none;
 }
 .pilulka:hover { background: var(--modra); color: #fff; }
 .pilulka { border-radius: 999px !important; }
@@ -123,7 +123,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 .scena__ovladani { position: absolute; left: 12px; bottom: 12px; z-index: 3; }
 .scena:not(.scena--3d) .scena__ovladani, .scena:not(.scena--3d) .scena__napoveda { display: none; }
 .prepinac { display: inline-flex; padding: 4px; border-radius: 12px; background: rgba(255, 255, 255, .9); }
-.prepinac__tl { border: 0; background: transparent; padding: 8px 16px; border-radius: 9px; cursor: pointer; font-weight: 800; --w: 800; font-size: 13px; text-transform: uppercase; }
+.prepinac__tl { border: 0; background: transparent; padding: 8px 16px; border-radius: 9px; cursor: pointer; font-weight: 700; --w: 700; font-size: 13px; text-transform: uppercase; }
 .prepinac__tl[aria-pressed="true"] { background: var(--modra); color: #fff; }
 .scena__napoveda { position: absolute; right: 16px; bottom: 22px; z-index: 3; font-size: 13px; font-weight: 700; --w: 700; color: var(--modra); opacity: .75; pointer-events: none; }
 .scena__napoveda--pryc { display: none; }
@@ -158,7 +158,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 
 /* ceník */
 .trava { background: url('../img/trava.svg') repeat-x 0 0 / 150px 70px; height: 70px; }
-.cenik__cena, .cenik__pozn { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 52px; line-height: 1; }
+.cenik__cena, .cenik__pozn { font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 52px; line-height: 1; }
 .cenik__cena { color: var(--modra); }
 .cenik__pozn { color: var(--placeholder); }
 
@@ -173,7 +173,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 
 /* kalendář */
 .kalendar { position: relative; background: #fff; border-radius: 18px; padding: 16px 8px 14px; }
-.kalendar__mesic { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 17px; text-transform: uppercase; padding: 6px 8px 0; }
+.kalendar__mesic { font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 17px; text-transform: uppercase; padding: 6px 8px 0; }
 .kalendar__nav { position: absolute; right: 8px; top: 8px; display: flex; align-items: center; gap: 2px; }
 .kalendar__sipka, .kalendar__dnes { border: 0; background: transparent; cursor: pointer; border-radius: 8px; }
 .kalendar__sipka { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; }
@@ -191,8 +191,8 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
   height: 44px; border-radius: 3px; background: var(--mimo-bg); color: var(--mimo-fg);
 }
-.den__cislo { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 14px; line-height: 1; }
-.den__stav { display: none; font-weight: 800; --w: 800; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 11px; line-height: 1; }
+.den__cislo { font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 14px; line-height: 1; }
+.den__stav { display: none; font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 11px; line-height: 1; }
 .den--volno { background: var(--volno-bg); color: var(--text); }
 .den--volno .den__stav { color: var(--volno-fg); }
 .den--obsazeno { background: var(--obs-bg); color: var(--text); }
@@ -233,7 +233,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   .den__stav { display: block; margin-top: 5px; }
   .kalendar__dny span { font-size: 12px; }
   .kalendar__dny span::after { content: none; }
-  .den--dnes::after { content: 'DNES'; width: auto; height: auto; background: none; font-size: 8px; font-weight: 800; --w: 800; color: var(--modra); top: 3px; right: 5px; }
+  .den--dnes::after { content: 'DNES'; width: auto; height: auto; background: none; font-size: 8px; font-weight: 700; --w: 700; color: var(--modra); top: 3px; right: 5px; }
 }
 
 /* =========================================================
@@ -356,7 +356,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   .den { height: calc(41 * var(--u)); justify-content: flex-start; padding-top: calc(9 * var(--u)); border-radius: calc(3 * var(--u)); }
   .den__cislo { font-size: calc(14 * var(--u)); text-box: trim-both cap alphabetic; }
   .den__stav { display: block; margin-top: calc(8 * var(--u)); font-size: calc(11 * var(--u)); text-box: trim-both cap alphabetic; }
-  .den--dnes::after { content: 'DNES'; width: auto; height: auto; background: none; font-weight: 800; --w: 800; font-size: calc(8.5 * var(--u)); color: var(--modra); top: calc(4 * var(--u)); right: calc(6 * var(--u)); }
+  .den--dnes::after { content: 'DNES'; width: auto; height: auto; background: none; font-weight: 700; --w: 700; font-size: calc(8.5 * var(--u)); color: var(--modra); top: calc(4 * var(--u)); right: calc(6 * var(--u)); }
   .kalendar__hlaska { left: calc(11 * var(--u)); right: calc(11 * var(--u)); top: calc(400 * var(--u)); margin: 0; }
   .kalendar__stav { display: none; }   /* v návrhu není */
 }
@@ -433,17 +433,19 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 
 /* 1. odpočet – mobil/tablet */
 .list--odpocet { background: var(--zelena); color: var(--zelena-svetla); text-align: center; padding: 56px 16px 64px; gap: 10px; overflow: hidden; }
-.odpocet__uz { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); text-transform: uppercase; font-size: 60px; line-height: 1; text-box: trim-both cap alphabetic; }
-.odpocet__cislo { font-family: var(--pismo-logo); font-size-adjust: none; color: #f7f7f7; line-height: 1; white-space: nowrap; rotate: -7deg; padding: .12em 0 .2em; }
+.odpocet__uz { font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); text-transform: uppercase; font-size: 60px; line-height: 1; text-box: trim-both cap alphabetic; }
+.odpocet__cislo { font-weight: 900; font-family: var(--pismo-logo); font-size-adjust: none; color: #f7f7f7; line-height: 1; white-space: nowrap; rotate: -7deg; padding: .12em 0 .2em; }
 .odpocet__vnitrek { display: inline-block; }
-.odpocet__do { font-weight: 900; --w: 900; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 46px; line-height: 1; text-box: trim-both cap alphabetic; }
+.odpocet__do { font-weight: 700; --w: 700; --d: var(--cond); font-stretch: condensed; font-family: var(--pismo-cond); font-size: 46px; line-height: 1; text-box: trim-both cap alphabetic; }
 
 /* 2. o minitáboře – mobil/tablet */
 .info { list-style: none; display: grid; gap: 22px; }
 .info__polozka { display: grid; grid-template-columns: 76px 1fr; gap: 14px; align-items: start; }
 .info__polozka .ikona { max-width: 64px; max-height: 70px; margin-top: 2px; }
 .info__polozka .titulek { margin-bottom: 10px; }
-.info__odkaz { color: var(--modra); text-decoration: none; }
+.info__odkaz { color: var(--modra); text-decoration: none; white-space: nowrap; }
+.info__sipka { display: inline-block; width: 1.05em; height: .55em; margin-left: .35em; vertical-align: .05em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; transition: translate .2s ease; }
+.info__odkaz:hover .info__sipka { translate: 3px 0; }
 .info__odkaz:hover { text-decoration: underline; }
 .info__pozn { font-size: 13px; line-height: 1.25; margin-top: 10px; text-box: trim-both cap alphabetic; }
 .list--omin .foto { aspect-ratio: 942 / 802; }
@@ -455,7 +457,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 .qr svg { display: block; width: 100%; height: 100%; }
 .prihlaska__tl {
   display: block; padding: 12px 16px; border-radius: 999px; background: var(--modra); color: #fff; text-align: center; text-decoration: none;
-  font-weight: 800; --w: 800; font-size: 14px; text-transform: uppercase; text-box: trim-both cap alphabetic;
+  font-weight: 700; --w: 700; font-size: 15px; letter-spacing: .01em; text-transform: uppercase; text-box: trim-both cap alphabetic;
 }
 .prihlaska__tl:hover { background: #0f2fd6; }
 
@@ -514,7 +516,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   .prihlaska__text { left: calc(1202 * var(--u)); top: calc(721 * var(--u)); width: calc(470 * var(--u)); line-height: calc(39.5 * var(--u)); }
   .prihlaska__tl {
     left: calc(1200 * var(--u)); top: calc(889 * var(--u)); width: calc(460 * var(--u)); height: calc(21 * var(--u));
-    padding: calc(6.5 * var(--u)) 0 0; font-size: calc(12.5 * var(--u));
+    padding: calc(6 * var(--u)) 0 0; font-size: calc(14 * var(--u));   /* stejně jako aktivní položka v záhlaví */
   }
 }
 

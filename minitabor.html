@@ -6,30 +6,10 @@
   <title>Minitábor – Poutníci</title>
   <meta name="description" content="Minitábor turistického oddílu Poutníci – odpočet, informace o táboře, fotky a přihláška.">
 
-  <!-- ============ PÍSMA GAMAY + CHEESECAKE (Adobe Fonts) ============
-       1) fonts.adobe.com → Gamay → „Add to Web Project“ (zaškrtni i Variable)
-          + do STEJNÉHO projektu přidej Cheesecake (Mark Simonson) – logo „Poutníci“ a velké číslo odpočtu
-       2) ID projektu (např. abc1def) vlož níže do ADOBE_KIT (ve všech .html)
-       Dokud je prázdné, použije se náhradní Archivo a Lobster z Google Fonts. -->
-  <script>
-    (function () {
-      var ADOBE_KIT = 'msh8cqt';
-      var l = document.createElement('link');
-      l.rel = 'stylesheet';
-      l.href = ADOBE_KIT
-        ? 'https://use.typekit.net/' + ADOBE_KIT + '.css'
-        : 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Lobster&display=swap';
-      document.head.appendChild(l);
-      if (ADOBE_KIT) {
-        var lob = document.createElement('link');
-        lob.rel = 'stylesheet';
-        lob.href = 'https://fonts.googleapis.com/css2?family=Lobster&display=swap';
-        document.head.appendChild(lob);
-      }
-    })();
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Písma z Adobe Fonts (projekt msh8cqt): gamay, gamay-condensed, cheesecake.
+       V nastavení projektu na fonts.adobe.com musí být Character set „All Characters“ (kvůli ř, ě, č, š, ž). -->
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/msh8cqt.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -68,7 +48,7 @@
       <ul class="info">
         <li class="info__polozka info__polozka--misto"><img class="ikona" src="assets/img/ikony/misto.svg" alt=""><div>
           <h3 class="titulek">Místo</h3>
-          <p class="maly-text">Rabštejn nad Střelou, u Nučické lípy<br><a class="info__odkaz" id="odkazMapy" href="https://mapy.cz/zakladni?source=coor&amp;id=13.2833231%2C50.0531928&amp;x=13.2833231&amp;y=50.0531928&amp;z=16" target="_blank" rel="noopener">Odkaz na mapy zde –v</a></p>
+          <p class="maly-text">Rabštejn nad Střelou, u Nučické lípy<br><a class="info__odkaz" id="odkazMapy" href="https://mapy.cz/zakladni?source=coor&amp;id=13.2833231%2C50.0531928&amp;x=13.2833231&amp;y=50.0531928&amp;z=16" target="_blank" rel="noopener">Odkaz na mapy zde<svg class="info__sipka" viewBox="0 0 24 12" aria-hidden="true"><path d="M1 6h20M16 1.5 21 6l-5 4.5"/></svg></a></p>
         </div></li>
         <li class="info__polozka info__polozka--vek"><img class="ikona" src="assets/img/ikony/vek.svg" alt=""><div>
           <h3 class="titulek">Věk</h3>
