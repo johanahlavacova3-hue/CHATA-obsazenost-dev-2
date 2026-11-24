@@ -3,56 +3,259 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Obsazenost chaty</title>
-  <meta name="description" content="Kalendář obsazenosti chaty – volné a obsazené termíny.">
-  <meta name="robots" content="noindex">
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Chata – Poutníci</title>
+  <meta name="description" content="Chata turistického oddílu Poutníci – 3D půdorys, fotky, vybavení, ceník a kalendář obsazenosti.">
+
+  <!-- Písma z Adobe Fonts (projekt msh8cqt): gamay, gamay-condensed, cheesecake.
+       V nastavení projektu na fonts.adobe.com musí být Character set „All Characters“ (kvůli ř, ě, č, š, ž). -->
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/msh8cqt.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    } }
+  </script>
 </head>
 <body>
+
+  <!-- ============ HLAVIČKA ============ -->
   <header class="hlavicka">
-    <div class="obal">
-      <div class="hlavicka__spolek" id="spolek"></div>
-      <h1 class="hlavicka__nadpis">Obsazenost chaty</h1>
-    </div>
+    <a class="logo" href="index.html" aria-label="Poutníci – chata">Poutníci</a>
+
+    <button class="menu-tl" type="button" aria-expanded="false" aria-controls="menu">
+      <span class="skryte">Menu</span><span class="menu-tl__car" aria-hidden="true"></span>
+    </button>
+
+    <nav class="menu" id="menu" aria-label="Hlavní menu">
+      <a class="menu__o-nas" href="404.html">O nás</a>
+      <a class="menu__akce" href="404.html">Akce</a>
+      <a class="menu__oddil" href="404.html">Oddíl</a>
+      <a class="menu__minitabor" href="minitabor.html">Minitábor</a>
+      <a class="menu__plechovky" href="404.html">Plechovky</a>
+      <a class="menu__chata" href="index.html" aria-current="page">Chata</a>
+      <a class="menu__fotky" href="404.html">Fotky</a>
+    </nav>
   </header>
 
-  <main class="obal obsah">
-    <nav class="navigace" aria-label="Výběr měsíce">
-      <button class="tlacitko" id="predchozi" type="button" aria-label="Předchozí měsíc">‹</button>
-      <div class="navigace__vyber">
-        <label class="skryte" for="vyberMesic">Měsíc</label>
-        <select id="vyberMesic" class="vyber vyber--mesic"></select>
-        <label class="skryte" for="vyberRok">Rok</label>
-        <select id="vyberRok" class="vyber vyber--rok"></select>
+  <main>
+
+    <!-- ============ 1. CHATA – 3D půdorys ============ -->
+    <section class="list list--chata" id="chata">
+      <h1 class="nadpis nadpis--obri">Chata</h1>
+
+      <div class="scena" id="scena">
+        <div class="scena__zaloha" aria-hidden="true">
+          <svg viewBox="0 0 609.73 312.8" class="pudorys"><use href="#pudorys-spodni"/></svg>
+        </div>
+        <div class="scena__ovladani">
+          <div class="prepinac" role="group" aria-label="Pohled na chatu" data-stav="dron">
+            <button type="button" class="prepinac__tl" data-pohled="dron" aria-pressed="true">Z dronu</button>
+            <button type="button" class="prepinac__tl" data-pohled="podkrovi" aria-pressed="false">Podkroví</button>
+            <button type="button" class="prepinac__tl" data-pohled="prizemi" aria-pressed="false">Přízemí</button>
+          </div>
+        </div>
+        <p class="scena__napoveda" id="scenaNapoveda">↔ táhni a otáčej</p>
       </div>
-      <button class="tlacitko" id="dnes" type="button">Dnes</button>
-      <button class="tlacitko" id="dalsi" type="button" aria-label="Další měsíc">›</button>
-    </nav>
+    </section>
 
-    <div class="kalendar" role="grid" aria-labelledby="vyberMesic">
-      <div class="kalendar__dny" role="row">
-        <div role="columnheader">Po</div><div role="columnheader">Út</div><div role="columnheader">St</div>
-        <div role="columnheader">Čt</div><div role="columnheader">Pá</div><div role="columnheader">So</div>
-        <div role="columnheader">Ne</div>
+    <!-- ============ 2. O RÁBU ============ -->
+    <section class="list list--rabu" id="o-rabu">
+      <h2 class="nadpis">O Rábu</h2>
+      <p class="odstavec">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
+      <a class="pilulka" href="#vybaveni">Chci vědět víc</a>
+      <figure class="foto">
+        <img src="assets/img/o-rabu.jpg" alt="Děti s vedoucím nad mapou" loading="lazy" width="1235" height="1050">
+      </figure>
+    </section>
+
+    <!-- ============ 3. FOTKY ============ -->
+    <section class="list list--galerie" id="fotky" aria-label="Fotky chaty">
+      <div class="galerie" tabindex="0" aria-roledescription="galerie">
+        <div class="galerie__okno" id="galerieOkno"></div>
+        <button class="galerie__sipka galerie__sipka--vlevo" type="button" id="galeriePred" aria-label="Předchozí fotka">
+          <svg viewBox="0 0 20 32" aria-hidden="true"><path d="M16 3L4 16l12 13"/></svg>
+        </button>
+        <button class="galerie__sipka galerie__sipka--vpravo" type="button" id="galerieDal" aria-label="Další fotka">
+          <svg viewBox="0 0 20 32" aria-hidden="true"><path d="M4 3l12 13L4 29"/></svg>
+        </button>
+        <p class="skryte" aria-live="polite">Fotka <span id="galerieCislo">1</span> z <span id="galerieCelkem">1</span></p>
       </div>
-      <div class="kalendar__mrizka" id="mrizka" aria-live="polite"></div>
-    </div>
+      <div class="nahledy" id="galerieNahledy" role="tablist" aria-label="Výběr fotky"></div>
+    </section>
 
-    <ul class="legenda">
-      <li><i class="legenda__barva legenda__barva--volno"></i>volno</li>
-      <li><i class="legenda__barva legenda__barva--obsazeno"></i>obsazeno</li>
-      <li><i class="legenda__barva legenda__barva--dnes"></i>dnes</li>
-      <li><i class="legenda__barva legenda__barva--minule"></i>uplynulé dny</li>
-    </ul>
+    <!-- ============ 4. VYBAVENÍ ============ -->
+    <section class="list list--vybaveni" id="vybaveni">
+      <h2 class="nadpis">Vybavení</h2>
+      <p class="odstavec">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
 
-    <p class="hlaska skryt" id="chyba" role="status"></p>
-    <p class="stav" id="stav"></p>
+      <ul class="vybaveni">
+        <li class="polozka polozka--topeni"><img class="ikona" src="assets/img/ikony/topeni.svg" alt=""><div><h3 class="titulek">Topení</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+        <li class="polozka polozka--kuchyne"><img class="ikona" src="assets/img/ikony/kuchyne.svg" alt=""><div><h3 class="titulek">Kuchyně</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+        <li class="polozka polozka--spinkani"><img class="ikona" src="assets/img/ikony/spinkani.svg" alt=""><div><h3 class="titulek">Spinkání</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+        <li class="polozka polozka--louka"><img class="ikona" src="assets/img/ikony/louka.svg" alt=""><div><h3 class="titulek">Louka</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+        <li class="polozka polozka--wc"><img class="ikona" src="assets/img/ikony/wc.svg" alt=""><div><h3 class="titulek">WC</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+        <li class="polozka polozka--naradi"><img class="ikona" src="assets/img/ikony/pila.svg" alt=""><div><h3 class="titulek">Nářadí</h3><p class="maly-text">Většinu nářadí si nutně nemusíte vozit vlastní, základní vybavení máme!</p></div></li>
+      </ul>
+
+      <div class="plany" role="img" aria-label="Půdorysy chaty">
+        <svg viewBox="0 0 565.21 312.8" class="pudorys pudorys--horni" role="img" aria-label="Podkroví"><use href="#pudorys-horni"/></svg>
+        <svg viewBox="0 0 609.73 312.8" class="pudorys pudorys--spodni" role="img" aria-label="Přízemí"><use href="#pudorys-spodni"/></svg>
+      </div>
+    </section>
+
+    <!-- ============ 5. CENÍK ============ -->
+    <section class="list list--cenik" id="cenik">
+      <h2 class="nadpis">Ceník</h2>
+      <p class="odstavec">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
+      <div class="trava" aria-hidden="true"></div>
+      <span class="kour" aria-hidden="true"><i></i><i></i><i></i></span>
+      <img class="cenik__chata" src="assets/img/chata-barevna.svg" alt="Ilustrace chaty" width="390" height="247">
+      <p class="cenik__cena">500&nbsp;Kč/noc</p>
+      <p class="cenik__pozn">*Celá chata a&nbsp;louka</p>
+    </section>
+
+    <!-- ============ 6. REZERVACE + KALENDÁŘ ============ -->
+    <section class="list list--rezervace" id="rezervace">
+      <h2 class="nadpis">Rezervace</h2>
+      <p class="odstavec">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tincidunt sem sed arcu. Aenean vel massa quis mauris vehicula lacinia. Praesent vitae arcu tempor neque lacinia pretium. Mauris metus. Fusce aliquam</p>
+
+      <div class="kontakty">
+        <div class="kontakt">
+          <span class="kontakt__foto" aria-hidden="true"></span>
+          <div class="kontakt__text">
+            <h3 class="titulek">Tomáš Černý</h3>
+            <a href="tel:+420333444555">+ 420 333 444 555</a>
+            <a href="mailto:turistika@zebrak.cz">turistika@zebrak.cz</a>
+          </div>
+        </div>
+        <div class="kontakt">
+          <span class="kontakt__foto" aria-hidden="true"></span>
+          <div class="kontakt__text">
+            <h3 class="titulek">Tomáš Černý</h3>
+            <a href="tel:+420333444555">+ 420 333 444 555</a>
+            <a href="mailto:turistika@zebrak.cz">turistika@zebrak.cz</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="kalendar" aria-label="Kalendář obsazenosti">
+        <p class="kalendar__mesic" id="kalMesic" aria-live="polite"></p>
+        <div class="kalendar__nav">
+          <button type="button" class="kalendar__sipka" id="kalPred" aria-label="Předchozí měsíc">
+            <svg viewBox="0 0 10 16" aria-hidden="true"><path d="M8 2L2 8l6 6"/></svg>
+          </button>
+          <button type="button" class="kalendar__dnes" id="kalDnes">Dneska</button>
+          <button type="button" class="kalendar__sipka" id="kalDal" aria-label="Další měsíc">
+            <svg viewBox="0 0 10 16" aria-hidden="true"><path d="M2 2l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="kalendar__dny" aria-hidden="true">
+          <span data-kratce="Po">Pondělí</span><span data-kratce="Út">Úterý</span><span data-kratce="St">Středa</span>
+          <span data-kratce="Čt">Čtvrtek</span><span data-kratce="Pá">Pátek</span><span data-kratce="So">Sobota</span>
+          <span data-kratce="Ne">Neděle</span>
+        </div>
+        <div class="kalendar__mrizka" id="kalMrizka" role="grid" aria-labelledby="kalMesic"></div>
+        <p class="kalendar__hlaska skryt" id="kalChyba" role="status"></p>
+        <p class="kalendar__stav" id="kalStav"></p>
+      </div>
+    </section>
+
   </main>
 
-  <!-- pořadí je důležité: nastavení → data → kalendář → aplikace -->
-  <script src="js/config.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/kalendar.js"></script>
-  <script src="js/app.js"></script>
+  <!-- půdorysy (souřadnice z návrhu) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <!-- podkroví (Spinkání) a přízemí (Klubovna, Kuchyň, Spíž, Kůlna) – z ilustrátoru, popisky v gamay-narrow -->
+    <symbol id="pudorys-horni" viewBox="0 0 565.21 312.8">
+      <polygon points="2.5 2.5 2.5 310.3 357.16 310.3 357.16 215.51 562.71 215.51 562.71 2.5 2.5 2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="357.16" y1="215.51" x2="357.16" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <polyline points="357.16 73.3 312.59 73.3 312.59 55.22 194.64 55.22 194.64 2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="208.61" y1="55.22" x2="208.61" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="222.2" y1="55.22" x2="222.2" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="235.79" y1="55.22" x2="235.79" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="249.38" y1="55.22" x2="249.38" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="262.97" y1="55.22" x2="262.97" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="276.56" y1="55.22" x2="276.56" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="290.14" y1="55.22" x2="290.14" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="303.73" y1="55.22" x2="303.73" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="309.01" y1="55.22" x2="321.35" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="313.15" y1="56.19" x2="346.9" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="313.15" y1="59.18" x2="357.16" y2="37.9" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="313.15" y1="64.74" x2="355.95" y2="60.07" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="194.64" y="55.22" width="117.95" height="18.08" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="188.03" y="154.75" width="9.11" height="9.11" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="335.54" y="176.76" width="21.62" height="21.62" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <path d="M357.16,102.9c26.01,0,47.09,21.09,47.09,47.1h-47.09" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <text class="pudorys__popis" x="85.15" y="154.75">Spinkání</text>
+      <text class="pudorys__popis" x="427.01" y="62.4">Spinkání 2</text>
+      <circle cx="346.35" cy="187.57" r="5.46"/>
+    </symbol>
+    <symbol id="pudorys-spodni" viewBox="0 0 609.73 312.8">
+      <line x1="2.5" y1="63.07" x2="2.5" y2="110.17" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <polyline points="85.15 2.5 2.5 2.5 2.5 63.07" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="159.06" y1="2.5" x2="85.15" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="375.98" y1="2.5" x2="159.06" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="407.86" y1="2.5" x2="375.98" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <polyline points="562.71 24.99 562.71 2.5 407.86 2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="562.71" y1="72.09" x2="562.71" y2="24.99" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <polyline points="544.78 215.51 562.71 215.51 562.71 72.09" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="466.89" y1="215.51" x2="544.78" y2="215.51" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <polyline points="357.16 223.79 357.16 215.51 466.89 215.51" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="357.16" y1="270.28" x2="357.16" y2="223.79" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <polyline points="259.5 310.3 357.16 310.3 357.16 270.28" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="197.14" y1="310.3" x2="259.5" y2="310.3" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="164.28" y1="310.3" x2="197.14" y2="310.3" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="89.93" y1="310.3" x2="164.28" y2="310.3" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <polyline points="2.5 271.92 2.5 310.3 89.93 310.3" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="2.5" y1="198.75" x2="2.5" y2="271.92" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="2.5" y1="110.17" x2="2.5" y2="198.75" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="357.16" y1="105.78" x2="357.16" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="357.16" y1="143.4" x2="357.16" y2="105.78" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="357.16" y1="215.51" x2="357.16" y2="143.4" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="429.72" y1="215.51" x2="429.72" y2="2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <polyline points="357.16 73.3 312.59 73.3 312.59 55.22 194.64 55.22 194.64 2.5" fill="none" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <line x1="208.61" y1="55.22" x2="208.61" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="222.2" y1="55.22" x2="222.2" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="235.79" y1="55.22" x2="235.79" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="249.38" y1="55.22" x2="249.38" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="262.97" y1="55.22" x2="262.97" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="276.56" y1="55.22" x2="276.56" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="290.14" y1="55.22" x2="290.14" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="303.73" y1="55.22" x2="303.73" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="309.01" y1="55.22" x2="321.35" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="313.15" y1="56.19" x2="346.9" y2="2.5" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="313.15" y1="59.18" x2="357.16" y2="37.9" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <line x1="313.15" y1="64.74" x2="355.95" y2="60.07" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <rect x="188.03" y="154.75" width="9.11" height="9.11" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="197.14" y="276.55" width="160.02" height="33.74" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="50.3" y="159.13" width="139.6" height="40.84" transform="translate(299.65 59.45) rotate(90)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="146.54" y="110.69" width="24.45" height="22.56" transform="translate(280.74 -36.79) rotate(90)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="149.41" y="149.35" width="24.45" height="22.56" transform="translate(322.26 -1) rotate(90)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="149.41" y="188" width="24.45" height="22.56" transform="translate(379.14 63.17) rotate(97.01)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="146.54" y="225.84" width="24.45" height="22.56" transform="translate(395.89 78.36) rotate(90)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="69.49" y="225.84" width="24.45" height="22.56" transform="translate(-155.41 318.84) rotate(-90)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="66.63" y="187.19" width="24.45" height="22.56" transform="translate(-119.62 277.32) rotate(-90)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="66.63" y="148.54" width="24.45" height="22.56" transform="translate(-89.39 218.58) rotate(-82.99)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="66.63" y="110.69" width="24.45" height="22.56" transform="translate(-23.56 224.97) rotate(-102.28)" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <rect x="335.54" y="176.76" width="21.62" height="21.62" fill="#b3b3b3" stroke="#000" stroke-width="5" stroke-miterlimit="10"/>
+      <path d="M497.68,215.51c0,17-13.79,30.78-30.79,30.78v-30.78" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <path d="M2.5,63.07h47.09c0,26.01-21.08,47.1-47.09,47.1" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <path d="M358.09,270.28h-47.09c0-26.01,21.08-47.1,47.09-47.1" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <path d="M561.64,24.99h47.09c0,26.01-21.08,47.1-47.09,47.1" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <path d="M544.78,215.51v47.09c-26.01,0-47.1-21.08-47.1-47.09" fill="none" stroke="#000" stroke-width="2" stroke-miterlimit="10"/>
+      <text class="pudorys__popis" x="85.15" y="90.13">Klubovna</text>
+      <text class="pudorys__popis" x="224.6" y="243.78">Kuchyň</text>
+      <text class="pudorys__popis" x="375.98" y="40.93">Spíž</text>
+      <text class="pudorys__popis" x="475.39" y="40.93">Kůlna</text>
+      <circle cx="346.35" cy="187.57" r="5.46"/>
+    </symbol>
+  </svg>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/efekty.js"></script>
+  <script src="assets/js/galerie.js"></script>
+  <script src="assets/js/kalendar.js"></script>
+  <script type="module" src="assets/js/scena3d.js"></script>
 </body>
 </html>

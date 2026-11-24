@@ -4,7 +4,7 @@
 window.CHATA_CONFIG = {
   // Adresa webové aplikace z Apps Scriptu (končí na /exec).
   // Prázdné = stránka ukazuje ukázková data.
-  API_URL: 'https://script.google.com/macros/s/AKfycbxYRlzBt-bFQ3D_a-Wb77bN-PZoyXvg4f708GV5FkFtacL9IEvgMX6C21KSssCie_E7LQ/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbxRDr4tuUTLOtJByKFDEvgzIY8e-VZab5Q5detrPW-ylr7KnWnRSeWgKal4j7jHTUTBeQ/exec',
 
   // Název spolku, pokud by se nenačetl z tabulky.
   SPOLEK: 'Turistický oddíl',

@@ -112,6 +112,7 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
 .foto { border-radius: 20px; overflow: hidden; background: var(--placeholder); }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
 .pudorys { display: block; color: #000; overflow: visible; }
+.pudorys__popis { font-family: 'gamay-narrow', 'gamay', sans-serif; font-size: 18px; font-weight: 500; font-size-adjust: none; fill: #111; }
 
 /* 3D scéna */
 .scena { position: relative; border-radius: 20px; background: var(--panel); overflow: hidden; isolation: isolate; aspect-ratio: 1 / 1.05; }
@@ -322,7 +323,10 @@ button { font-family: inherit; font-size: inherit; line-height: inherit; color: 
   .polozka--louka .ikona    { left: calc(-127 * var(--u)); top: calc(4 * var(--u));  width: calc(85 * var(--u)); }
   .polozka--naradi .ikona   { left: calc(-132 * var(--u)); top: calc(17 * var(--u)); width: calc(100 * var(--u)); }
   .plany { position: absolute; inset: 0; display: block; }
-  .plany .pudorys { position: absolute; left: calc(1290 * var(--u)); width: calc(483 * var(--u)); height: calc(263 * var(--u)); }
+  /* oba půdorysy ve stejném měřítku (0,837 px návrhu / jednotku výkresu), levý okraj budovy na 1290 */
+  .plany .pudorys { position: absolute; left: calc(1290 * var(--u)); height: calc(262 * var(--u)); }
+  .plany .pudorys--horni { width: calc(473 * var(--u)); }
+  .plany .pudorys--spodni { width: calc(510 * var(--u)); }
   .pudorys--horni { top: calc(192 * var(--u)); }
   .pudorys--spodni { top: calc(470 * var(--u)); }
 
