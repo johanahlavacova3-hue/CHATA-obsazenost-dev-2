@@ -1,80 +1,38 @@
-# Poutníci – stránka CHATA
+# Obsazenost chaty – veřejný web
 
-Statická stránka (HTML + CSS + JS). 3D scéna používá three.js z CDN (jsDelivr).
+Statická stránka s kalendářem obsazenosti. Data čte z Google Tabulky
+(Apps Script webová aplikace) a ukazuje jen **volno / obsazeno** a název spolku.
+
+## Struktura
 
 ```
-index.html              stránka CHATA (5 listů: 3D půdorys, O Rábu, Vybavení, Fotky, Rezervace + Kalendář)
-404.html                všechny ostatní položky menu (zatím)
-assets/css/styles.css   vzhled – barvy a písma nahoře v :root
-assets/js/config.js     ★ NASTAVENÍ – adresa Apps Scriptu, seznam fotek v galerii
-assets/js/efekty.js     mobilní menu, stín hlavičky
-assets/js/galerie.js    galerie se šipkami, náhledy, swipe
-assets/js/kalendar.js   kalendář obsazenosti (data z Google Tabulky)
-assets/js/scena3d.js    3D louka s chatou v řezu (statická, otáčí se tažením) – tvar chaty v poli STENY
-assets/img/             fotky (zatím výřezy z návrhu – nahraď originály)
+index.html        – kostra stránky
+css/styles.css    – vzhled (barvy nahoře v :root)
+js/config.js      – NASTAVENÍ: adresa API, název spolku, rozsah listování
+js/data.js        – načtení dat z Apps Scriptu (fetch, záložně JSONP)
+js/kalendar.js    – vykreslení měsíce
+js/app.js         – navigace, automatické obnovování, hlášky
 ```
 
-## Co vyměnit
-- `assets/img/o-rabu.jpg` a `assets/img/galerie/*` – teď jsou to výřezy ze screenshotu návrhu, náhledy
-  galerie mají nízké rozlišení. Dej originály (ideálně ~2000 px na šířku) a uprav seznam v `config.js`.
-- Texty „Lorem ipsum“ a kontakty v `index.html`.
-- Šedé čtverce (`polozka__obr`, `kontakt__foto`) → `<img>`.
+## Nastavení
 
-## Písmo Gamay (Adobe Fonts)
-1. fonts.adobe.com → Gamay → „Add to Web Project“ (vyber i Variable, kvůli animacím šířky/tloušťky).
-2. Do projektu přidej doménu webu (a `localhost` pro testování).
-3. ID projektu vlož do `ADOBE_KIT` v `<head>` souboru `index.html` i `404.html`.
-4. Pokud Adobe ukáže jiný název rodiny než `gamay-variable`, přepiš ho v `--pismo` ve `styles.css`.
-Nadpisy a titulky = Gamay Condensed (osa šířky 75), text = Gamay Regular (400).
-Dokud je ADOBE_KIT prázdné, používá se náhradní Archivo (Google Fonts). Logo: Lobster.
+Vše v `js/config.js`:
 
-## Spuštění
-Kvůli 3D (ES moduly) otevírej přes lokální server, ne dvojklikem: `npx serve .` nebo `python3 -m http.server`.
+- `API_URL` – adresa webové aplikace z Apps Scriptu (končí `/exec`). Prázdné = ukázková data.
+- `SPOLEK` – záložní název, normálně se bere z tabulky (Nastavení → „Název spolku na webu“).
+- `MESICU_ZPET` / `MESICU_DOPREDU` – rozsah listování (12 = rok zpátky, 120 = 10 let dopředu).
+  Rok zpátky musí odpovídat `WEB_ROKU_ZPET` v Chata.gs.
 
-## Rozestupy
-Na počítači je vše v jednotkách `--u` = 1 px návrhu (frame 1920 px), takže rozestupy odpovídají Figmě
-na jakékoli šířce. Pod 1100 px tablet, pod 700 px mobil – vlastní rozvržení.
+## Bezpečnost
 
-## 3D model chaty – maketa
+Z tabulky na web jde jen název spolku a souvislé bloky obsazených dnů.
+Žádná jména, kontakty ani poznámky. Předběžné termíny se zobrazují jako obsazené.
 
-Scéna (`assets/js/scena3d.js`) zobrazuje pozemek jako architektonickou maketu na tmavém podkladu.
-- **Terén** jsou vrstvy kartonu podle vrstevnic s tenkou tmavou hranou. Tloušťku vrstvy určuje `VRSTVA` v config.js (1 m).
-- **Chata** má světlé dřevo (balza) a bílou střechu. Interiér je tmavě hnědá OSB, okna svítí.
-- **Stromy** jsou pěnové koruny na místech koulí z modelu. **Potok** je matné modré plexisklo.
-- **Slunce** se počítá podle skutečného času, takže stíny se během dne otáčejí. V noci svítí okna a ohniště.
-- **V zimě** (podle skutečného počasí) jsou vrstvy i koruny bílé.
-- **Pohledy:** Z dronu, Podkroví a Přízemí. Patra se odříznou vodorovným řezem a řez je černý.
+## Nasazení
 
-Barvy makety najdeš na začátku `scena3d.js` (objekt `BARVY`). Chata má původní materiály z modelu, interiér je hnědá OSB.
+Stačí nahrát celou složku na libovolný statický hosting (GitHub Pages, Netlify,
+hosting oddílového webu). Do jiného webu jde vložit přes:
 
-**Testovací přepínač** (vlevo nahoře ve scéně) přepíná Teď / Jaro / Léto / Podzim / Zima a Den / Noc. Před spuštěním webu ho vypni v config.js: `SCENA: { TEST: false }`.
-
-### Nová verze modelu z Blenderu
-1. Export: **glTF Binary (.glb)**, „+Y Up“ zapnuto, „Apply Modifiers“ zapnuto.
-2. Spusť převod:
-   ```
-   cd nastroje
-   npm install            # jen poprvé
-   node priprav-model.mjs ~/Downloads/chata_POZEMEK.glb ../assets/3d
-   ```
-3. Skript vytvoří `assets/3d/chata.glb` a `pozemek.json`.
-
-Skript převede terén na výškovou mapu a koule stromů na seznam stromů. Když je chata v souboru dvakrát, nechá tu, která stojí na terénu. Nakonec model zkomprimuje.
-
-Výšku podlahy podkroví nastavíš v config.js (`PODKROVI_NAD_PODLAHOU`).
-
-Náhled jiného času: `index.html?cas=2027-01-15T21:30&snih=1`
-
-## Stránka MINITÁBOR (`minitabor.html`)
-
-Sekce: **odpočet** (zelený, hlavička nad ním zezelená) · **O minitáboře** (místo, věk, termín, cena) · **fotky** · **přihláška** (kontakty, QR kód, tlačítko).
-
-Nastavení je v `assets/js/config-minitabor.js`:
-- `ZACATEK` a `KONEC` určují tábor. Odpočet ukazuje dny do začátku (1 den / 2–4 dny / 5+ dní). Během tábora ukáže „Právě běží“, po něm „Minitábor byl super“. Termín v textu se doplní sám.
-- `PRIHLASKA_URL` je odkaz na přihlášku. Z něj se vytvoří QR kód (knihovna qrcode-generator z jsDelivr) a tlačítko. Prázdné = černý čtverec jako v návrhu.
-- `MAPY_URL` je odkaz „Odkaz na mapy zde“.
-- `GALERIE` jsou fotky. Teď jsou tu výřezy z návrhu, nahraď je originály (ideálně 2000 px na šířku).
-
-**Písmo Cheesecake** (Mark Simonson) je v Adobe Fonts, licence povoluje web i komerční použití. Přidej ho do stejného webového projektu jako Gamay. Použité je jen tam, kde je v návrhu: logo „Poutníci“ a velké číslo odpočtu. Písma se načítají odkazem `https://use.typekit.net/msh8cqt.css` v hlavičce každé stránky; v projektu na fonts.adobe.com nastav Character set „All Characters“ (jinak chybí ř, ě, č, š, ž) a povol doménu webu. Velké číslo se samo přizpůsobí šířce z návrhu, ať je načtené kterékoli písmo.
-
-**Menu:** Minitábor je mezi Oddílem a Plechovkami. Položky vlevo se posunuly, Plechovky, Chata a Fotky zůstaly na místě. Pozice jsou v `styles.css` u `.menu__…`.
+```html
+<iframe src="https://…/index.html" style="width:100%;height:760px;border:0"></iframe>
+```
